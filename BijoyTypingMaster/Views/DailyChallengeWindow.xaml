@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="BijoyTypingMaster.Views.DailyChallengeWindow"
+             Title="Daily Challenge 📅">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="30" Spacing="20">
+
+            <!-- Challenge Header -->
+            <Border Background="Linear-gradient(90deg, #6366f1, #8b5cf6)"
+                    Stroke="#4f46e5"
+                    StrokeThickness="2"
+                    Padding="20"
+                    StrokeShape="RoundRectangle 15">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="🎯 TODAY'S CHALLENGE"
+                           FontSize="24"
+                           FontAttributes="Bold"
+                           TextColor="White"
+                           HorizontalOptions="Center"/>
+                    
+                    <Label x:Name="DateLabel"
+                           Text="February 10, 2026"
+                           FontSize="14"
+                           TextColor="White"
+                           Opacity="0.8"
+                           HorizontalOptions="Center"/>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Challenge Details Card -->
+            <Border BackgroundColor="#1e293b"
+                    Stroke="#334155"
+                    StrokeThickness="2"
+                    Padding="25"
+                    StrokeShape="RoundRectangle 12">
+                <VerticalStackLayout Spacing="15">
+                    
+                    <!-- Challenge Type -->
+                    <HorizontalStackLayout Spacing="10">
+                        <Label Text="📋 Type:"
+                               FontSize="16"
+                               FontAttributes="Bold"
+                               TextColor="#94a3b8"
+                               VerticalOptions="Center"/>
+                        <Label x:Name="ChallengeTypeLabel"
+                               Text="Speed Challenge"
+                               FontSize="18"
+                               FontAttributes="Bold"
+                               TextColor="White"
+                               VerticalOptions="Center"/>
+                    </HorizontalStackLayout>
+
+                    <!-- Difficulty Badge -->
+                    <HorizontalStackLayout Spacing="10">
+                        <Label Text="⚡ Difficulty:"
+                               FontSize="16"
+                               FontAttributes="Bold"
+                               TextColor="#94a3b8"
+                               VerticalOptions="Center"/>
+                        <Border x:Name="DifficultyBadge"
+                                BackgroundColor="#fbbf24"
+                                Padding="8,4"
+                                StrokeThickness="0"
+                                StrokeShape="RoundRectangle 8">
+                            <Label x:Name="DifficultyLabel"
+                                   Text="Medium"
+                                   FontSize="14"
+                                   FontAttributes="Bold"
+                                   TextColor="#1e293b"/>
+                        </Border>
+                    </HorizontalStackLayout>
+
+                    <!-- Description -->
+                    <Label x:Name="DescriptionLabel"
+                           Text="Type at 40 WPM or faster"
+                           FontSize="18"
+                           TextColor="White"
+                           Margin="0,10,0,0"/>
+
+                    <!-- Requirements -->
+                    <Border BackgroundColor="#0f172a"
+                            Padding="15"
+                            StrokeThickness="0"
+                            StrokeShape="RoundRectangle 8"
+                            Margin="0,10,0,0">
+                        <VerticalStackLayout Spacing="8">
+                            <Label Text="REQUIREMENTS"
+                                   FontSize="12"
+                                   FontAttributes="Bold"
+                                   TextColor="#94a3b8"/>
+                            <HorizontalStackLayout Spacing="20">
+                                <HorizontalStackLayout Spacing="5">
+                                    <Label Text="🎯"
+                                           FontSize="16"
+                                           VerticalOptions="Center"/>
+                                    <Label x:Name="TargetWPMLabel"
+                                           Text="40 WPM"
+                                           FontSize="16"
+                                           FontAttributes="Bold"
+                                           TextColor="White"
+                                           VerticalOptions="Center"/>
+                                </HorizontalStackLayout>
+                                                                <HorizontalStackLayout Spacing="5">
+                                    <Label Text="✓"
+                                           FontSize="16"
+                                           VerticalOptions="Center"/>
+                                    <Label x:Name="TargetAccuracyLabel"
+                                           Text="90%"
+                                           FontSize="16"
+                                           FontAttributes="Bold"
+                                           TextColor="White"
+                                           VerticalOptions="Center"/>
+                                </HorizontalStackLayout>
+                                <HorizontalStackLayout Spacing="5">
+                                    <Label Text="⏱️"
+                                           FontSize="16"
+                                           VerticalOptions="Center"/>
+                                    <Label x:Name="TimeLimitLabel"
+                                           Text="60s"
+                                           FontSize="16"
+                                           FontAttributes="Bold"
+                                           TextColor="White"
+                                           VerticalOptions="Center"/>
+                                </HorizontalStackLayout>
+                            </HorizontalStackLayout>
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- Reward -->
+                    <Border BackgroundColor="#10b981"
+                            Padding="12"
+                            StrokeThickness="0"
+                            StrokeShape="RoundRectangle 8"
+                            Margin="0,10,0,0">
+                        <HorizontalStackLayout Spacing="10" HorizontalOptions="Center">
+                            <Label Text="⭐"
+                                   FontSize="20"
+                                   VerticalOptions="Center"/>
+                            <Label Text="REWARD:"
+                                   FontSize="14"
+                                   FontAttributes="Bold"
+                                   TextColor="White"
+                                   VerticalOptions="Center"/>
+                            <Label x:Name="RewardLabel"
+                                   Text="100-200 XP"
+                                   FontSize="18"
+                                   FontAttributes="Bold"
+                                   TextColor="White"
+                                   VerticalOptions="Center"/>
+                        </HorizontalStackLayout>
+                    </Border>
+
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Challenge Text Preview -->
+            <Border BackgroundColor="#1e293b"
+                    Stroke="#334155"
+                    StrokeThickness="2"
+                    Padding="20"
+                    StrokeShape="RoundRectangle 12">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="📝 CHALLENGE TEXT"
+                           FontSize="14"
+                           FontAttributes="Bold"
+                           TextColor="#94a3b8"/>
+                    <Label x:Name="ChallengeTextLabel"
+                           Text="আমি বাংলায় গান গাই..."
+                           FontSize="18"
+                           TextColor="White"
+                           LineBreakMode="WordWrap"/>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Start/Completion Section -->
+            <StackLayout x:Name="StartSection" Spacing="15">
+                <Button x:Name="StartChallengeBtn"
+                        Text="🚀 START CHALLENGE"
+                        FontSize="20"
+                        FontAttributes="Bold"
+                        BackgroundColor="#10b981"
+                        TextColor="White"
+                        HeightRequest="60"
+                        CornerRadius="12"
+                        Clicked="OnStartChallengeClicked"/>
+
+                <!-- Streak Info -->
+                <Border BackgroundColor="#fef3c7"
+                        Padding="15"
+                        StrokeThickness="0"
+                        StrokeShape="RoundRectangle 8">
+                    <HorizontalStackLayout Spacing="10" HorizontalOptions="Center">
+                        <Label Text="🔥"
+                               FontSize="24"
+                               VerticalOptions="Center"/>
+                        <Label x:Name="StreakLabel"
+                               Text="Current Streak: 0 days"
+                               FontSize="16"
+                               FontAttributes="Bold"
+                               TextColor="#92400e"
+                               VerticalOptions="Center"/>
+                    </HorizontalStackLayout>
+                </Border>
+            </StackLayout>
+
+            <!-- Completed Section (Hidden initially) -->
+            <StackLayout x:Name="CompletedSection" IsVisible="False" Spacing="15">
+                <Border BackgroundColor="#10b981"
+                        Padding="25"
+                        StrokeThickness="0"
+                        StrokeShape="RoundRectangle 12">
+                    <VerticalStackLayout Spacing="15">
+                        <Label Text="✅ CHALLENGE COMPLETED!"
+                               FontSize="24"
+                               FontAttributes="Bold"
+                               TextColor="White"
+                               HorizontalOptions="Center"/>
+                        
+                        <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto" ColumnSpacing="20" RowSpacing="10">
+                            <Label Grid.Row="0" Grid.Column="0"
+                                   Text="Your WPM:"
+                                   FontSize="14"
+                                   TextColor="White"
+                                   Opacity="0.8"/>
+                            <Label Grid.Row="0" Grid.Column="1"
+                                   x:Name="AchievedWPMLabel"
+                                   Text="45"
+                                   FontSize="20"
+                                   FontAttributes="Bold"
+                                   TextColor="White"
+                                   HorizontalOptions="End"/>
+
+                            <Label Grid.Row="1" Grid.Column="0"
+                                   Text="Your Accuracy:"
+                                   FontSize="14"
+                                   TextColor="White"
+                                   Opacity="0.8"/>
+                            <Label Grid.Row="1" Grid.Column="1"
+                                   x:Name="AchievedAccuracyLabel"
+                                   Text="95%"
+                                   FontSize="20"
+                                   FontAttributes="Bold"
+                                   TextColor="White"
+                                   HorizontalOptions="End"/>
+
+                            <Label Grid.Row="2" Grid.Column="0"
+                                   Text="XP Earned:"
+                                   FontSize="14"
+                                   TextColor="White"
+                                   Opacity="0.8"/>
+                            <Label Grid.Row="2" Grid.Column="1"
+                                   x:Name="XPEarnedLabel"
+                                   Text="+150 XP"
+                                   FontSize="20"
+                                   FontAttributes="Bold"
+                                   TextColor="#ffd700"
+                                   HorizontalOptions="End"/>
+                        </Grid>
+
+                        <Label x:Name="CompletionMessageLabel"
+                               Text="🎉 Excellent work! You've exceeded the target!"
+                               FontSize="16"
+                               TextColor="White"
+                               HorizontalOptions="Center"
+                               HorizontalTextAlignment="Center"
+                               Margin="0,10,0,0"/>
+                    </VerticalStackLayout>
+                </Border>
+
+                <Label Text="Come back tomorrow for a new challenge!"
+                       FontSize="16"
+                       TextColor="#94a3b8"
+                       HorizontalOptions="Center"
+                       HorizontalTextAlignment="Center"
+                       Margin="0,10,0,0"/>
+            </StackLayout>
+
+            <!-- Challenge History -->
+            <Border BackgroundColor="#1e293b"
+                    Stroke="#334155"
+                    StrokeThickness="2"
+                    Padding="20"
+                    StrokeShape="RoundRectangle 12"
+                    Margin="0,20,0,0">
+                <VerticalStackLayout Spacing="15">
+                    <Label Text="📊 RECENT CHALLENGES"
+                           FontSize="18"
+                           FontAttributes="Bold"
+                           TextColor="White"/>
+                    
+                    <CollectionView x:Name="HistoryCollectionView"
+                                  HeightRequest="200">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Border BackgroundColor="#0f172a"
+                                        Padding="12"
+                                        Margin="0,5"
+                                        StrokeThickness="0"
+                                        StrokeShape="RoundRectangle 8">
+                                    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                                        <Label Grid.Column="0"
+                                               Text="{Binding Date, StringFormat='{0:MMM dd}'}"
+                                               FontSize="14"
+                                               FontAttributes="Bold"
+                                               TextColor="#94a3b8"
+                                               VerticalOptions="Center"/>
+                                        <Label Grid.Column="1"
+                                               Text="{Binding ChallengeType}"
+                                               FontSize="14"
+                                               TextColor="White"
+                                               VerticalOptions="Center"/>
+                                        <Label Grid.Column="2"
+                                               Text="{Binding IsCompleted, Converter={StaticResource BoolToCheckConverter}}"
+                                               FontSize="18"
+                                               TextColor="{Binding IsCompleted, Converter={StaticResource BoolToColorConverter}}"
+                                               VerticalOptions="Center"/>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                        <CollectionView.EmptyView>
+                            <Label Text="No challenge history yet. Complete today's challenge to start!"
+                                   FontSize="14"
+                                   TextColor="#64748b"
+                                   HorizontalOptions="Center"
+                                   Margin="0,20"/>
+                        </CollectionView.EmptyView>
+                    </CollectionView>
+                </VerticalStackLayout>
+            </Border>
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>
