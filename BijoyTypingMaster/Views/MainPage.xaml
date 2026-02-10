@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="BijoyTypingMaster.Views.MainPage"
+             Title="Bijoy Typing Master">
+
+    <ScrollView>
+        <VerticalStackLayout
+            Spacing="25"
+            Padding="30,0"
+            VerticalOptions="Center">
+
+            <Label
+                Text="Welcome to Bijoy Typing Master!"
+                SemanticProperties.HeadingLevel="Level1"
+                FontSize="32"
+                HorizontalOptions="Center" />
+
+            <Label
+                Text="Learn to type faster in Bijoy and Unicode Bengali"
+                SemanticProperties.HeadingLevel="Level2"
+                SemanticProperties.Description="Welcome message"
+                FontSize="18"
+                HorizontalOptions="Center" />
+
+            <Button
+                x:Name="BijoyPracticeBtn"
+                Text="Practice Bijoy"
+                Clicked="OnBijoyPracticeClicked"
+                HorizontalOptions="Center"
+                Margin="0,20,0,0" />
+
+            <Button
+                x:Name="UnicodePracticeBtn"
+                Text="Practice Unicode"
+                Clicked="OnUnicodePracticeClicked"
+                HorizontalOptions="Center" />
+
+            <Button
+                x:Name="ViewProgressBtn"
+                Text="View Progress"
+                Clicked="OnViewProgressClicked"
+                HorizontalOptions="Center" />
+
+            <Button
+                x:Name="SettingsBtn"
+                Text="Settings & License"
+                Clicked="OnSettingsClicked"
+                HorizontalOptions="Center" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

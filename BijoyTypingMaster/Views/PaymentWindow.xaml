@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="BijoyTypingMaster.Views.PaymentWindow"
+             Title="License & Payment">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="30" Spacing="20">
+            
+            <!-- App Logo/Header -->
+            <Label Text="🎯 Bijoy Typing Master" 
+                   FontSize="32" 
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center"
+                   Margin="0,20,0,10"/>
+            
+            <Label Text="Professional Bangla Typing Training" 
+                   FontSize="16" 
+                   HorizontalOptions="Center"
+                   TextColor="{StaticResource Gray600}"/>
+
+            <!-- Trial Status -->
+            <Frame BackgroundColor="{StaticResource Secondary}" 
+                   Padding="20" 
+                   CornerRadius="10"
+                   Margin="0,20,0,0">
+                <StackLayout Spacing="10">
+                    <Label x:Name="TrialStatusLabel" 
+                           Text="Trial Status" 
+                           FontSize="18" 
+                           FontAttributes="Bold"/>
+                    
+                    <Label x:Name="TrialDaysLabel" 
+                           Text="Days Remaining: 7" 
+                           FontSize="16"/>
+                    
+                    <Label x:Name="StatusMessageLabel" 
+                           Text="Enjoy full features during your trial period" 
+                           FontSize="14"
+                           TextColor="{StaticResource Gray600}"/>
+                </StackLayout>
+            </Frame>
+
+            <!-- Machine ID Section -->
+            <Frame BackgroundColor="{StaticResource Gray100}" 
+                   Padding="20" 
+                   CornerRadius="10">
+                <StackLayout Spacing="10">
+                    <Label Text="Your Machine ID" 
+                           FontSize="18" 
+                           FontAttributes="Bold"/>
+                    
+                    <Label Text="Share this ID when purchasing to receive your license key:" 
+                           FontSize="12"
+                           TextColor="{StaticResource Gray600}"/>
+                    
+                    <Frame BackgroundColor="{StaticResource White}" 
+                           Padding="15" 
+                           CornerRadius="5"
+                           HasShadow="False">
+                        <Label x:Name="MachineIdLabel" 
+                               Text="XXXX-XXXX-XXXX-XXXX" 
+                               FontSize="20" 
+                               FontFamily="Courier"
+                               FontAttributes="Bold"
+                               HorizontalOptions="Center"/>
+                    </Frame>
+                    
+                    <Button Text="📋 Copy Machine ID" 
+                            Clicked="OnCopyMachineIdClicked"
+                            BackgroundColor="{StaticResource Gray500}"/>
+                </StackLayout>
+            </Frame>
+
+            <!-- Pricing -->
+            <Frame BackgroundColor="{StaticResource Primary}" 
+                   Padding="20" 
+                   CornerRadius="10">
+                <StackLayout Spacing="10">
+                    <Label Text="💎 Premium License" 
+                           FontSize="24" 
+                           FontAttributes="Bold"
+                           TextColor="{StaticResource White}"
+                           HorizontalOptions="Center"/>
+                    
+                    <Label Text="200 BDT" 
+                           FontSize="36" 
+                           FontAttributes="Bold"
+                           TextColor="{StaticResource White}"
+                           HorizontalOptions="Center"/>
+                    
+                    <Label Text="✓ Lifetime access&#x0a;✓ All lessons unlocked&#x0a;✓ Progress tracking&#x0a;✓ Virtual keyboard&#x0a;✓ Priority support" 
+                           FontSize="14"
+                           TextColor="{StaticResource White}"
+                           HorizontalOptions="Center"
+                           LineBreakMode="WordWrap"/>
+                </StackLayout>
+            </Frame>
+
+            <!-- Purchase Button -->
+            <Button Text="🛒 Buy Now (200 BDT)" 
+                    Clicked="OnBuyNowClicked"
+                    FontSize="18"
+                    FontAttributes="Bold"
+                    HeightRequest="60"
+                    BackgroundColor="#4CAF50"/>
+
+            <!-- Payment Instructions -->
+            <Frame BackgroundColor="{StaticResource Gray100}" 
+                   Padding="15" 
+                   CornerRadius="10">
+                <StackLayout Spacing="8">
+                    <Label Text="📱 Payment Instructions:" 
+                           FontSize="16" 
+                           FontAttributes="Bold"/>
+                    
+                    <Label Text="1. Click 'Buy Now' button above&#x0a;2. Fill the Google Form with your Machine ID&#x0a;3. Send 200 BDT via bKash&#x0a;4. You'll receive your license key via email within 24 hours" 
+                           FontSize="13"
+                           TextColor="{StaticResource Gray600}"
+                           LineBreakMode="WordWrap"/>
+                </StackLayout>
+            </Frame>
+
+            <!-- License Activation Section -->
+            <Frame BackgroundColor="{StaticResource Gray100}" 
+                   Padding="20" 
+                   CornerRadius="10">
+                <StackLayout Spacing="10">
+                    <Label Text="Already have a license key?" 
+                           FontSize="18" 
+                           FontAttributes="Bold"/>
+                    
+                    <Label Text="Enter your license key below:" 
+                           FontSize="12"
+                           TextColor="{StaticResource Gray600}"/>
+                    
+                    <Entry x:Name="LicenseKeyEntry" 
+                           Placeholder="XXXX-XXXX-XXXX-XXXX"
+                           FontFamily="Courier"
+                           MaxLength="19"
+                           Keyboard="Text"/>
+                    
+                    <Button Text="✅ Activate License" 
+                            Clicked="OnActivateLicenseClicked"
+                            BackgroundColor="{StaticResource Tertiary}"/>
+                </StackLayout>
+            </Frame>
+
+            <!-- Back Button (if not expired) -->
+            <Button x:Name="BackButton"
+                    Text="← Back to App" 
+                    Clicked="OnBackClicked"
+                    BackgroundColor="{StaticResource Gray400}"/>
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

@@ -1,0 +1,185 @@
+using BijoyTypingMaster.Models;
+using BijoyTypingMaster.Services;
+
+namespace BijoyTypingMaster.Views;
+
+public partial class PracticeWindow : ContentPage
+{
+    private readonly TypingEngine _typingEngine;
+    private readonly DatabaseManager _dbManager;
+    private readonly string _layoutType;
+    private Lesson? _currentLesson;
+    private bool _isSessionActive = false;
+
+    public PracticeWindow(string layoutType)
+    {
+        InitializeComponent();
+        
+        _layoutType = layoutType;
+        _typingEngine = new TypingEngine();
+        _dbManager = new DatabaseManager();
+        
+        LayoutLabel.Text = layoutType;
+        _typingEngine.SetLayout(layoutType);
+        
+        LoadRandomLesson();
+    }
+
+    private void LoadRandomLesson()
+    {
+        var lessons = _dbManager.GetLessonsByType(_layoutType);
+        
+        if (lessons.Count > 0)
+        {
+            var random = new Random();
+            _currentLesson = lessons[random.Next(lessons.Count)];
+            TargetTextLabel.Text = _currentLesson.TextContent;
+            
+            // Update title
+            Title = $"Practice: {_currentLesson.Title}";
+        }
+        else
+        {
+            TargetTextLabel.Text = "No lessons available for this layout.";
+        }
+    }
+
+    private void OnStartClicked(object sender, EventArgs e)
+    {
+        if (_currentLesson == null) return;
+
+        _isSessionActive = true;
+        _typingEngine.StartSession(_currentLesson.TextContent);
+        
+        // Enable/disable buttons
+        StartButton.IsEnabled = false;
+        ResetButton.IsEnabled = true;
+        FinishButton.IsEnabled = true;
+        
+        // Focus on hidden entry to capture keyboard
+        HiddenEntry.Focus();
+        
+        // Clear display
+        UserInputLabel.Text = "";
+        UpdateStats();
+    }
+
+    private void OnResetClicked(object sender, EventArgs e)
+    {
+        _isSessionActive = false;
+        _typingEngine.Reset();
+        
+        UserInputLabel.Text = "";
+        HiddenEntry.Text = "";
+        
+        // Reset buttons
+        StartButton.IsEnabled = true;
+        ResetButton.IsEnabled = false;
+        FinishButton.IsEnabled = false;
+        
+        UpdateStats();
+    }
+
+    private async void OnFinishClicked(object sender, EventArgs e)
+    {
+        if (!_isSessionActive) return;
+
+        var (wpm, accuracy) = _typingEngine.EndSession();
+        _isSessionActive = false;
+
+        // Save to database
+        if (_currentLesson != null)
+        {
+            var progress = new UserProgress
+            {
+                Date = DateTime.Now,
+                WPM = wpm,
+                Accuracy = accuracy,
+                LessonId = _currentLesson.Id
+            };
+
+            _dbManager.SaveProgress(progress);
+        }
+
+        // Show results
+        await DisplayAlert("Session Complete!", 
+            $"WPM: {wpm:F2}\nAccuracy: {accuracy:F2}%\n\nGreat job!", 
+            "OK");
+
+        // Reset for next session
+        OnResetClicked(sender, e);
+        LoadRandomLesson();
+    }
+
+    private void OnTextChanged(object sender, TextChangedEventArgs e)
+    {
+        if (!_isSessionActive) return;
+
+        // Get the last character typed
+        if (!string.IsNullOrEmpty(e.NewTextValue) && e.NewTextValue.Length > e.OldTextValue.Length)
+        {
+            string newChar = e.NewTextValue.Substring(e.OldTextValue.Length);
+            
+            // Process through typing engine
+            string processedChar = _typingEngine.ProcessKeyPress(newChar);
+            
+            // Update display
+            UserInputLabel.Text = _typingEngine.CurrentInput;
+            UpdateStats();
+            UpdateTargetTextDisplay();
+            
+            // Check if session complete
+            if (_typingEngine.IsSessionComplete())
+            {
+                OnFinishClicked(sender, e);
+            }
+        }
+        else if (e.NewTextValue.Length < e.OldTextValue.Length)
+        {
+            // Handle backspace
+            _typingEngine.ProcessKeyPress("Backspace");
+            UserInputLabel.Text = _typingEngine.CurrentInput;
+            UpdateStats();
+            UpdateTargetTextDisplay();
+        }
+    }
+
+    private void UpdateStats()
+    {
+        WpmLabel.Text = _typingEngine.WPM.ToString("F2");
+        AccuracyLabel.Text = _typingEngine.Accuracy.ToString("F2") + "%";
+        ProgressLabel.Text = _typingEngine.GetProgress().ToString("F0") + "%";
+    }
+
+    private void UpdateTargetTextDisplay()
+    {
+        // This is a simplified version - in a real app, you'd use FormattedString
+        // to color individual characters
+        
+        // For now, just keep it simple
+        if (_currentLesson != null)
+        {
+            TargetTextLabel.Text = _currentLesson.TextContent;
+        }
+    }
+
+    private void OnTextTapped(object sender, EventArgs e)
+    {
+        // Focus on hidden entry when user taps the text area
+        HiddenEntry.Focus();
+    }
+
+    private void OnEntryFocused(object sender, FocusEventArgs e)
+    {
+        // Entry is focused - ready to capture input
+    }
+
+    private void OnEntryUnfocused(object sender, FocusEventArgs e)
+    {
+        // Optionally re-focus if session is active
+        if (_isSessionActive)
+        {
+            HiddenEntry.Focus();
+        }
+    }
+}
