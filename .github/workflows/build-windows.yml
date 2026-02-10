@@ -3,118 +3,52 @@ name: Build Windows App
 on:
   push:
     branches: [ main ]
-  workflow_dispatch:  # Allow manual trigger
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: windows-2022
     
     steps:
-    - name: Checkout code
+    - name: Checkout
       uses: actions/checkout@v4
 
-    - name: Setup .NET 6
+    - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: '6.0.x'
+        dotnet-version: |
+          6.0.x
+          8.0.x
 
-    - name: Setup MSBuild
-      uses: microsoft/setup-msbuild@v2
-
-    - name: Install .NET MAUI workload
-      shell: pwsh
+    - name: Install MAUI
       run: |
-        echo "Installing MAUI workload..."
-        dotnet workload install maui-windows --source https://api.nuget.org/v3/index.json
-        if ($LASTEXITCODE -ne 0) {
-          echo "MAUI Windows workload failed, trying full MAUI..."
-          dotnet workload install maui --source https://api.nuget.org/v3/index.json
-        }
+        dotnet nuget add source https://api.nuget.org/v3/index.json -n nuget.org
+        dotnet workload install maui --from-rollback-file https://aka.ms/dotnet/maui/8.0.1xx.json --source https://api.nuget.org/v3/index.json
+      continue-on-error: false
 
-    - name: Restore NuGet packages
-      shell: pwsh
+    - name: Restore
+      run: dotnet restore BijoyTypingMaster/BijoyTypingMaster.csproj
+      
+    - name: Build
+      run: dotnet build BijoyTypingMaster/BijoyTypingMaster.csproj -c Release -f net6.0-windows10.0.19041.0 --no-restore
+
+    - name: Publish
+      run: dotnet publish BijoyTypingMaster/BijoyTypingMaster.csproj -c Release -f net6.0-windows10.0.19041.0 -r win10-x64 --self-contained -o publish
+
+    - name: Create Instructions
       run: |
-        cd BijoyTypingMaster
-        dotnet restore BijoyTypingMaster.csproj
-        if ($LASTEXITCODE -ne 0) { exit 1 }
+        echo "Bijoy Typing Master - Portable Edition" > publish/README.txt
+        echo "" >> publish/README.txt
+        echo "SETUP:" >> publish/README.txt
+        echo "1. Download SutonnyMJ.ttf from: https://www.omicronlab.com/download/fonts/SutonnyMJ.ttf" >> publish/README.txt
+        echo "2. Copy font to: Resources\Fonts\SutonnyMJ.ttf" >> publish/README.txt
+        echo "3. Run: BijoyTypingMaster.exe" >> publish/README.txt
 
-    - name: Build with MSBuild
-      shell: pwsh
-      run: |
-        cd BijoyTypingMaster
-        msbuild BijoyTypingMaster.csproj `
-          /p:Configuration=Release `
-          /p:TargetFramework=net6.0-windows10.0.19041.0 `
-          /p:Platform=x64 `
-          /p:RuntimeIdentifier=win10-x64 `
-          /restore
-        if ($LASTEXITCODE -ne 0) { 
-          echo "MSBuild failed, trying dotnet build..."
-          dotnet build BijoyTypingMaster.csproj -c Release -f net6.0-windows10.0.19041.0
-        }
+    - name: Package
+      run: Compress-Archive -Path publish\* -DestinationPath BijoyTypingMaster.zip
 
-    - name: Publish Self-Contained
-      shell: pwsh
-      run: |
-        cd BijoyTypingMaster
-        dotnet publish BijoyTypingMaster.csproj `
-          -f net6.0-windows10.0.19041.0 `
-          -c Release `
-          -r win10-x64 `
-          --self-contained true `
-          -p:PublishSingleFile=false `
-          -o ../publish
-        if ($LASTEXITCODE -ne 0) { exit 1 }
-
-    - name: Create README
-      shell: pwsh
-      run: |
-        $readme = @"
-╔══════════════════════════════════════════════════════════════╗
-║  Bijoy Typing Master - Portable Edition                     ║
-║  No Installation Required!                                   ║
-╚══════════════════════════════════════════════════════════════╝
-
-📥 QUICK START (3 Steps):
-
-1. DOWNLOAD FONT (Required for Bangla text):
-   https://www.omicronlab.com/download/fonts/SutonnyMJ.ttf
-
-2. COPY FONT to this folder:
-   Resources\Fonts\SutonnyMJ.ttf
-
-3. RUN THE APP:
-   Double-click: BijoyTypingMaster.exe
-
-✅ No .NET installation needed - everything is included!
-✅ No admin rights required
-✅ Fully portable - works from USB drive
-
-📊 SYSTEM REQUIREMENTS:
-- Windows 10 (1809+) or Windows 11
-- 200 MB free space
-- No other software needed!
-
-⚠️ IMPORTANT: Without SutonnyMJ.ttf font, Bangla text will show as boxes!
-
-🆘 TROUBLESHOOTING:
-- Bangla shows as □□□ → Missing SutonnyMJ.ttf font
-- Won't start → Run as Administrator once
-- Blocked by Windows → Right-click .exe → Properties → Unblock
-
-Generated: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')
-Build: Self-Contained Portable Edition
-"@
-        $readme | Out-File -FilePath ./publish/README.txt -Encoding UTF8
-
-    - name: Create ZIP Package
-      shell: pwsh
-      run: |
-        Compress-Archive -Path ./publish/* -DestinationPath BijoyTypingMaster-Portable.zip
-
-    - name: Upload Portable Package
+    - name: Upload
       uses: actions/upload-artifact@v4
       with:
-        name: BijoyTypingMaster-Portable-NoInstall
-        path: BijoyTypingMaster-Portable.zip
-        retention-days: 90
+        name: BijoyTypingMaster-Windows
+        path: BijoyTypingMaster.zip
