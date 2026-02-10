@@ -3,8 +3,6 @@ name: Build Windows App
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
   workflow_dispatch:  # Allow manual trigger
 
 jobs:
@@ -20,98 +18,99 @@ jobs:
       with:
         dotnet-version: '6.0.x'
 
-    - name: Setup .NET 8
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: '8.0.x'
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v2
 
-    - name: Install MAUI workload
+    - name: Install .NET MAUI workload
+      shell: pwsh
       run: |
+        echo "Installing MAUI workload..."
         dotnet workload install maui-windows --source https://api.nuget.org/v3/index.json
-        dotnet workload install maui --source https://api.nuget.org/v3/index.json
+        if ($LASTEXITCODE -ne 0) {
+          echo "MAUI Windows workload failed, trying full MAUI..."
+          dotnet workload install maui --source https://api.nuget.org/v3/index.json
+        }
 
-    - name: Restore dependencies
-      run: dotnet restore BijoyTypingMaster/BijoyTypingMaster.csproj --verbosity detailed
-
-    - name: Build Windows App
+    - name: Restore NuGet packages
+      shell: pwsh
       run: |
-        dotnet build BijoyTypingMaster/BijoyTypingMaster.csproj `
-          -f net6.0-windows10.0.19041.0 `
-          -c Release `
-          --no-restore `
-          --verbosity detailed
+        cd BijoyTypingMaster
+        dotnet restore BijoyTypingMaster.csproj
+        if ($LASTEXITCODE -ne 0) { exit 1 }
 
-    - name: Publish Self-Contained Windows App
+    - name: Build with MSBuild
+      shell: pwsh
       run: |
-        dotnet publish BijoyTypingMaster/BijoyTypingMaster.csproj `
+        cd BijoyTypingMaster
+        msbuild BijoyTypingMaster.csproj `
+          /p:Configuration=Release `
+          /p:TargetFramework=net6.0-windows10.0.19041.0 `
+          /p:Platform=x64 `
+          /p:RuntimeIdentifier=win10-x64 `
+          /restore
+        if ($LASTEXITCODE -ne 0) { 
+          echo "MSBuild failed, trying dotnet build..."
+          dotnet build BijoyTypingMaster.csproj -c Release -f net6.0-windows10.0.19041.0
+        }
+
+    - name: Publish Self-Contained
+      shell: pwsh
+      run: |
+        cd BijoyTypingMaster
+        dotnet publish BijoyTypingMaster.csproj `
           -f net6.0-windows10.0.19041.0 `
           -c Release `
           -r win10-x64 `
           --self-contained true `
           -p:PublishSingleFile=false `
-          -p:PublishTrimmed=false `
-          --no-restore `
-          -o ./publish
+          -o ../publish
+        if ($LASTEXITCODE -ne 0) { exit 1 }
 
-    - name: Create Portable Package with Instructions
+    - name: Create README
+      shell: pwsh
       run: |
-        # Create README for users
-        @"
-        ╔══════════════════════════════════════════════════════════════╗
-        ║  Bijoy Typing Master - Portable Edition                     ║
-        ║  No Installation Required!                                   ║
-        ╚══════════════════════════════════════════════════════════════╝
+        $readme = @"
+╔══════════════════════════════════════════════════════════════╗
+║  Bijoy Typing Master - Portable Edition                     ║
+║  No Installation Required!                                   ║
+╚══════════════════════════════════════════════════════════════╝
 
-        📥 QUICK START (3 Steps):
+📥 QUICK START (3 Steps):
 
-        1. DOWNLOAD FONT (Required for Bangla text):
-           https://www.omicronlab.com/download/fonts/SutonnyMJ.ttf
+1. DOWNLOAD FONT (Required for Bangla text):
+   https://www.omicronlab.com/download/fonts/SutonnyMJ.ttf
 
-        2. COPY FONT to this folder:
-           Resources\Fonts\SutonnyMJ.ttf
+2. COPY FONT to this folder:
+   Resources\Fonts\SutonnyMJ.ttf
 
-        3. RUN THE APP:
-           Double-click: BijoyTypingMaster.exe
+3. RUN THE APP:
+   Double-click: BijoyTypingMaster.exe
 
-        ✅ No .NET installation needed - everything is included!
-        ✅ No admin rights required
-        ✅ Fully portable - works from USB drive
+✅ No .NET installation needed - everything is included!
+✅ No admin rights required
+✅ Fully portable - works from USB drive
 
-        📊 SYSTEM REQUIREMENTS:
-        - Windows 10 (1809+) or Windows 11
-        - 200 MB free space
-        - No other software needed!
+📊 SYSTEM REQUIREMENTS:
+- Windows 10 (1809+) or Windows 11
+- 200 MB free space
+- No other software needed!
 
-        🎮 FEATURES:
-        - Phase 1: 6 core typing features (100%)
-        - Phase 2: 5 gamification features (71%)
-        - XP & Leveling System (50 levels)
-        - 26 Achievements to unlock
-        - Daily Challenges with streaks
-        - Custom text practice
-        - Speed tests with certificates
+⚠️ IMPORTANT: Without SutonnyMJ.ttf font, Bangla text will show as boxes!
 
-        ⚙️ DATABASE:
-        All your progress saves to:
-        %LOCALAPPDATA%\BijoyTypingMaster\BijoyTypingMaster.db
+🆘 TROUBLESHOOTING:
+- Bangla shows as □□□ → Missing SutonnyMJ.ttf font
+- Won't start → Run as Administrator once
+- Blocked by Windows → Right-click .exe → Properties → Unblock
 
-        To reset progress, delete that database file.
-
-        🆘 TROUBLESHOOTING:
-        - Bangla shows as □□□ → Missing SutonnyMJ.ttf font
-        - Won't start → Run as Administrator once
-        - Blocked by Windows → Right-click .exe → Properties → Unblock
-
-        📧 SUPPORT: https://github.com/imriadh/Bijoy-Typing-Master---Learn-Typing-Fast
-
-        Generated: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')
-        Build: Self-Contained Portable Edition
-        "@ | Out-File -FilePath ./publish/README.txt -Encoding UTF8
+Generated: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')
+Build: Self-Contained Portable Edition
+"@
+        $readme | Out-File -FilePath ./publish/README.txt -Encoding UTF8
 
     - name: Create ZIP Package
+      shell: pwsh
       run: |
-        cd publish
-        Compress-Archive -Path * -DestinationPath ../BijoyTypingMaster-Portable.zip
+        Compress-Archive -Path ./publish/* -DestinationPath BijoyTypingMaster-Portable.zip
 
     - name: Upload Portable Package
       uses: actions/upload-artifact@v4
