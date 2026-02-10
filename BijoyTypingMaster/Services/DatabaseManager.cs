@@ -140,6 +140,52 @@ public class DatabaseManager
                 command.ExecuteNonQuery();
             }
 
+            // Create UserAchievements table
+            string createUserAchievementsTable = @"
+                CREATE TABLE IF NOT EXISTS UserAchievements (
+                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    AchievementId INTEGER NOT NULL,
+                    UnlockedAt TEXT NOT NULL,
+                    Progress INTEGER DEFAULT 0
+                );";
+
+            using (var command = new SQLiteCommand(createUserAchievementsTable, connection))
+            {
+                command.ExecuteNonQuery();
+            }
+
+            // Create CustomTexts table
+            string createCustomTextsTable = @"
+                CREATE TABLE IF NOT EXISTS CustomTexts (
+                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    Title TEXT NOT NULL,
+                    Text TEXT NOT NULL,
+                    CreatedAt TEXT NOT NULL,
+                    LastPracticed TEXT,
+                    TimesCompleted INTEGER DEFAULT 0,
+                    BestWPM INTEGER DEFAULT 0,
+                    BestAccuracy INTEGER DEFAULT 0
+                );";
+
+            using (var command = new SQLiteCommand(createCustomTextsTable, connection))
+            {
+                command.ExecuteNonQuery();
+            }
+
+            // Create BookmarkedLessons table
+            string createBookmarkedLessonsTable = @"
+                CREATE TABLE IF NOT EXISTS BookmarkedLessons (
+                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    LessonNumber INTEGER NOT NULL,
+                    BookmarkedAt TEXT NOT NULL,
+                    Notes TEXT
+                );";
+
+            using (var command = new SQLiteCommand(createBookmarkedLessonsTable, connection))
+            {
+                command.ExecuteNonQuery();
+            }
+
             // Insert sample lessons if table is empty
             InsertSampleLessons(connection);
 
@@ -706,5 +752,205 @@ public class DatabaseManager
         }
 
         return challenges;
+    }
+
+    // ===== ACHIEVEMENTS METHODS =====
+
+    // Unlock achievement for user
+    public async Task UnlockAchievementAsync(int achievementId)
+    {
+        using var connection = new SQLiteConnection(_connectionString);
+        await connection.OpenAsync();
+
+        string query = @"
+            INSERT INTO UserAchievements (AchievementId, UnlockedAt, Progress)
+            VALUES (@AchievementId, @UnlockedAt, 0)";
+
+        using var command = new SQLiteCommand(query, connection);
+        command.Parameters.AddWithValue("@AchievementId", achievementId);
+        command.Parameters.AddWithValue("@UnlockedAt", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+
+        await command.ExecuteNonQueryAsync();
+    }
+
+    // Get user's unlocked achievements
+    public async Task<List<Achievement>> GetUserAchievementsAsync()
+    {
+        var achievements = new List<Achievement>();
+
+        using var connection = new SQLiteConnection(_connectionString);
+        await connection.OpenAsync();
+
+        string query = "SELECT * FROM UserAchievements ORDER BY UnlockedAt DESC";
+        using var command = new SQLiteCommand(query, connection);
+
+        using var reader = await command.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
+        {
+            achievements.Add(new Achievement
+            {
+                Id = reader.GetInt32(1), // AchievementId
+                IsUnlocked = true,
+                UnlockedAt = DateTime.Parse(reader.GetString(2)),
+                Progress = reader.GetInt32(3)
+            });
+        }
+
+        return achievements;
+    }
+
+    // ===== CUSTOM TEXT PRACTICE METHODS =====
+
+    // Save custom text
+    public async Task<int> SaveCustomTextAsync(string title, string text)
+    {
+        using var connection = new SQLiteConnection(_connectionString);
+        await connection.OpenAsync();
+
+        string query = @"
+            INSERT INTO CustomTexts (Title, Text, CreatedAt)
+            VALUES (@Title, @Text, @CreatedAt);
+            SELECT last_insert_rowid();";
+
+        using var command = new SQLiteCommand(query, connection);
+        command.Parameters.AddWithValue("@Title", title);
+        command.Parameters.AddWithValue("@Text", text);
+        command.Parameters.AddWithValue("@CreatedAt", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+
+        var result = await command.ExecuteScalarAsync();
+        return Convert.ToInt32(result);
+    }
+
+    // Get all custom texts
+    public async Task<List<CustomPracticeSession>> GetCustomTextsAsync()
+    {
+        var texts = new List<CustomPracticeSession>();
+
+        using var connection = new SQLiteConnection(_connectionString);
+        await connection.OpenAsync();
+
+        string query = "SELECT * FROM CustomTexts ORDER BY CreatedAt DESC";
+        using var command = new SQLiteCommand(query, connection);
+
+        using var reader = await command.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
+        {
+            texts.Add(new CustomPracticeSession
+            {
+                Id = reader.GetInt32(0),
+                Title = reader.GetString(1),
+                CustomText = reader.GetString(2),
+                CreatedAt = DateTime.Parse(reader.GetString(3)),
+                LastPracticed = reader.IsDBNull(4) ? null : DateTime.Parse(reader.GetString(4)),
+                TimesCompleted = reader.GetInt32(5),
+                BestWPM = reader.GetInt32(6),
+                BestAccuracy = reader.GetInt32(7)
+            });
+        }
+
+        return texts;
+    }
+
+    // Update custom text stats
+    public async Task UpdateCustomTextStatsAsync(int id, int wpm, int accuracy)
+    {
+        using var connection = new SQLiteConnection(_connectionString);
+        await connection.OpenAsync();
+
+        string query = @"
+            UPDATE CustomTexts
+            SET LastPracticed = @LastPracticed,
+                TimesCompleted = TimesCompleted + 1,
+                BestWPM = CASE WHEN @WPM > BestWPM THEN @WPM ELSE BestWPM END,
+                BestAccuracy = CASE WHEN @Accuracy > BestAccuracy THEN @Accuracy ELSE BestAccuracy END
+            WHERE Id = @Id";
+
+        using var command = new SQLiteCommand(query, connection);
+        command.Parameters.AddWithValue("@LastPracticed", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+        command.Parameters.AddWithValue("@WPM", wpm);
+        command.Parameters.AddWithValue("@Accuracy", accuracy);
+        command.Parameters.AddWithValue("@Id", id);
+
+        await command.ExecuteNonQueryAsync();
+    }
+
+    // Delete custom text
+    public async Task DeleteCustomTextAsync(int id)
+    {
+        using var connection = new SQLiteConnection(_connectionString);
+        await connection.OpenAsync();
+
+        string query = "DELETE FROM CustomTexts WHERE Id = @Id";
+        using var command = new SQLiteCommand(query, connection);
+        command.Parameters.AddWithValue("@Id", id);
+
+        await command.ExecuteNonQueryAsync();
+    }
+
+    // ===== LESSON BOOKMARKS METHODS =====
+
+    // Bookmark a lesson
+    public async Task BookmarkLessonAsync(int lessonNumber, string notes = "")
+    {
+        using var connection = new SQLiteConnection(_connectionString);
+        await connection.OpenAsync();
+
+        string query = @"
+            INSERT INTO BookmarkedLessons (LessonNumber, BookmarkedAt, Notes)
+            VALUES (@LessonNumber, @BookmarkedAt, @Notes)";
+
+        using var command = new SQLiteCommand(query, connection);
+        command.Parameters.AddWithValue("@LessonNumber", lessonNumber);
+        command.Parameters.AddWithValue("@BookmarkedAt", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+        command.Parameters.AddWithValue("@Notes", notes);
+
+        await command.ExecuteNonQueryAsync();
+    }
+
+    // Remove bookmark
+    public async Task UnbookmarkLessonAsync(int lessonNumber)
+    {
+        using var connection = new SQLiteConnection(_connectionString);
+        await connection.OpenAsync();
+
+        string query = "DELETE FROM BookmarkedLessons WHERE LessonNumber = @LessonNumber";
+        using var command = new SQLiteCommand(query, connection);
+        command.Parameters.AddWithValue("@LessonNumber", lessonNumber);
+
+        await command.ExecuteNonQueryAsync();
+    }
+
+    // Get bookmarked lessons
+    public async Task<List<int>> GetBookmarkedLessonsAsync()
+    {
+        var bookmarks = new List<int>();
+
+        using var connection = new SQLiteConnection(_connectionString);
+        await connection.OpenAsync();
+
+        string query = "SELECT LessonNumber FROM BookmarkedLessons ORDER BY BookmarkedAt DESC";
+        using var command = new SQLiteCommand(query, connection);
+
+        using var reader = await command.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
+        {
+            bookmarks.Add(reader.GetInt32(0));
+        }
+
+        return bookmarks;
+    }
+
+    // Check if lesson is bookmarked
+    public async Task<bool> IsLessonBookmarkedAsync(int lessonNumber)
+    {
+        using var connection = new SQLiteConnection(_connectionString);
+        await connection.OpenAsync();
+
+        string query = "SELECT COUNT(*) FROM BookmarkedLessons WHERE LessonNumber = @LessonNumber";
+        using var command = new SQLiteCommand(query, connection);
+        command.Parameters.AddWithValue("@LessonNumber", lessonNumber);
+
+        var result = await command.ExecuteScalarAsync();
+        return Convert.ToInt32(result) > 0;
     }
 }

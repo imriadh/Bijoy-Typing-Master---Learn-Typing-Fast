@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="BijoyTypingMaster.Views.AchievementsWindow"
+             Title="Achievements & Badges 🏆">
+
+    <Grid RowDefinitions="Auto,Auto,*" Padding="20" RowSpacing="15">
+
+        <!-- Header Stats -->
+        <Border Grid.Row="0"
+                Background="Linear-gradient(90deg, #f59e0b, #d97706)"
+                Stroke="#b45309"
+                StrokeThickness="2"
+                Padding="20"
+                StrokeShape="RoundRectangle 12">
+            <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10">
+                <VerticalStackLayout Grid.Column="0" Spacing="5">
+                    <Label Text="🏆"
+                           FontSize="32"
+                           HorizontalOptions="Center"/>
+                    <Label x:Name="TotalAchievementsLabel"
+                           Text="0/26"
+                           FontSize="20"
+                           FontAttributes="Bold"
+                           TextColor="White"
+                           HorizontalOptions="Center"/>
+                    <Label Text="Unlocked"
+                           FontSize="12"
+                           TextColor="White"
+                           Opacity="0.8"
+                           HorizontalOptions="Center"/>
+                </VerticalStackLayout>
+
+                <VerticalStackLayout Grid.Column="1" Spacing="5">
+                    <Label Text="⭐"
+                           FontSize="32"
+                           HorizontalOptions="Center"/>
+                    <Label x:Name="TotalXPLabel"
+                           Text="0 XP"
+                           FontSize="20"
+                           FontAttributes="Bold"
+                           TextColor="White"
+                           HorizontalOptions="Center"/>
+                    <Label Text="From Achievements"
+                           FontSize="12"
+                           TextColor="White"
+                           Opacity="0.8"
+                           HorizontalOptions="Center"/>
+                </VerticalStackLayout>
+
+                <VerticalStackLayout Grid.Column="2" Spacing="5">
+                    <Label Text="📈"
+                           FontSize="32"
+                           HorizontalOptions="Center"/>
+                    <Label x:Name="CompletionLabel"
+                           Text="0%"
+                           FontSize="20"
+                           FontAttributes="Bold"
+                           TextColor="White"
+                           HorizontalOptions="Center"/>
+                    <Label Text="Completion"
+                           FontSize="12"
+                           TextColor="White"
+                           Opacity="0.8"
+                           HorizontalOptions="Center"/>
+                </VerticalStackLayout>
+            </Grid>
+        </Border>
+
+        <!-- Filter Tabs -->
+        <Border Grid.Row="1"
+                BackgroundColor="#1e293b"
+                Padding="10"
+                StrokeThickness="0"
+                StrokeShape="RoundRectangle 8">
+            <HorizontalStackLayout Spacing="10" HorizontalOptions="Center">
+                <Button x:Name="AllFilterBtn"
+                        Text="All"
+                        Clicked="OnFilterClicked"
+                        BackgroundColor="#6366f1"
+                        TextColor="White"
+                        FontSize="14"
+                        Padding="15,8"
+                        CornerRadius="6"/>
+                <Button x:Name="SpeedFilterBtn"
+                        Text="Speed"
+                        Clicked="OnFilterClicked"
+                        BackgroundColor="#334155"
+                        TextColor="White"
+                        FontSize="14"
+                        Padding="15,8"
+                        CornerRadius="6"/>
+                <Button x:Name="AccuracyFilterBtn"
+                        Text="Accuracy"
+                        Clicked="OnFilterClicked"
+                        BackgroundColor="#334155"
+                        TextColor="White"
+                        FontSize="14"
+                        Padding="15,8"
+                        CornerRadius="6"/>
+                <Button x:Name="PracticeFilterBtn"
+                        Text="Practice"
+                        Clicked="OnFilterClicked"
+                        BackgroundColor="#334155"
+                        TextColor="White"
+                        FontSize="14"
+                        Padding="15,8"
+                        CornerRadius="6"/>
+            </HorizontalStackLayout>
+        </Border>
+
+        <!-- Achievements Grid -->
+        <ScrollView Grid.Row="2">
+            <CollectionView x:Name="AchievementsCollectionView"
+                          Margin="0,10">
+                <CollectionView.ItemsLayout>
+                    <GridItemsLayout Orientation="Vertical"
+                                   Span="2"
+                                   HorizontalItemSpacing="15"
+                                   VerticalItemSpacing="15"/>
+                </CollectionView.ItemsLayout>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Border BackgroundColor="#1e293b"
+                                Stroke="#334155"
+                                StrokeThickness="2"
+                                Padding="15"
+                                StrokeShape="RoundRectangle 12">
+                            <StackLayout Spacing="10">
+                                <!-- Icon & Status -->
+                                <Grid ColumnDefinitions="Auto,*">
+                                    <Label Grid.Column="0"
+                                           Text="{Binding Icon}"
+                                           FontSize="48"
+                                           VerticalOptions="Center"
+                                           Opacity="{Binding IsUnlocked, Converter={StaticResource BoolToOpacityConverter}}"/>
+                                    <Label Grid.Column="1"
+                                           Text="{Binding IsUnlocked, Converter={StaticResource BoolToLockConverter}}"
+                                           FontSize="24"
+                                           TextColor="{Binding IsUnlocked, Converter={StaticResource BoolToColorConverter}}"
+                                           HorizontalOptions="End"
+                                           VerticalOptions="Start"/>
+                                </Grid>
+
+                                <!-- Name & Tier -->
+                                <Label Text="{Binding Name}"
+                                       FontSize="18"
+                                       FontAttributes="Bold"
+                                       TextColor="White"/>
+                                <Label Text="{Binding Tier}"
+                                       FontSize="12"
+                                       TextColor="{Binding TierColor}"
+                                       FontAttributes="Bold"/>
+
+                                <!-- Description -->
+                                <Label Text="{Binding Description}"
+                                       FontSize="14"
+                                       TextColor="#94a3b8"
+                                       LineBreakMode="WordWrap"/>
+
+                                <!-- Progress Bar (for locked) -->
+                                <StackLayout IsVisible="{Binding IsUnlocked, Converter={StaticResource InverseBoolConverter}}"
+                                           Spacing="5">
+                                    <ProgressBar Progress="{Binding ProgressPercentage}"
+                                               ProgressColor="#6366f1"
+                                               HeightRequest="8"/>
+                                    <Label Text="{Binding ProgressText}"
+                                           FontSize="12"
+                                           TextColor="#64748b"
+                                           HorizontalOptions="End"/>
+                                </StackLayout>
+
+                                <!-- XP Reward -->
+                                <Border BackgroundColor="#10b981"
+                                        Padding="8,4"
+                                        StrokeThickness="0"
+                                        StrokeShape="RoundRectangle 6"
+                                        HorizontalOptions="Center">
+                                    <Label Text="{Binding XPRewardText}"
+                                           FontSize="12"
+                                           FontAttributes="Bold"
+                                           TextColor="White"/>
+                                </Border>
+
+                                <!-- Unlock Date (for unlocked) -->
+                                <Label IsVisible="{Binding IsUnlocked}"
+                                       Text="{Binding UnlockDateText}"
+                                       FontSize="11"
+                                       TextColor="#64748b"
+                                       HorizontalOptions="Center"/>
+                            </StackLayout>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </ScrollView>
+
+    </Grid>
+
+</ContentPage>
