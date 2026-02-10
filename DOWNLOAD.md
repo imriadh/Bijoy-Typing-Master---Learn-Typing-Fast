@@ -1,28 +1,53 @@
 # 📥 Download Pre-Built App (No Installation Required!)
 
-## ⚡ PORTABLE VERSION - Just Like an APK! 🎉
+## ⚡ TWO EASY OPTIONS
 
-**No .NET installation needed! No admin rights required! Works from USB drive!**
+### 🎯 Option 1: Download from GitHub (Recommended)
+**Automated build - just download and run!**
 
-This is a **self-contained package** with everything included - just download, add font, and run!
+1. Go to: **https://github.com/imriadh/Bijoy-Typing-Master---Learn-Typing-Fast/actions**
+2. Click the latest **"Build Windows App"** with ✅ green checkmark
+3. Scroll to **"Artifacts"** at bottom
+4. Download **"BijoyTypingMaster-Portable-NoInstall.zip"** (~150-250 MB)
+5. Extract, add font, and run!
+
+**Wait time**: Check every 10 minutes until build succeeds
 
 ---
 
-## 🚀 Quick Start (3 Steps)
+### 🔨 Option 2: Build on Your Windows PC (Faster & Reliable!)
+**If GitHub Actions fails, build it yourself in 10 minutes!**
 
-### Step 1: Download the App (5-10 minutes)
-1. Go to: **https://github.com/imriadh/Bijoy-Typing-Master---Learn-Typing-Fast/actions**
-2. Click the latest **"Build Windows App"** with green ✅
-3. Scroll to **"Artifacts"** section
-4. Download **"BijoyTypingMaster-Portable-NoInstall.zip"** (~150-250 MB)
+#### Prerequisites:
+- Windows 10/11
+- Internet connection (for first-time setup)
 
-### Step 2: Extract & Add Font (1 minute)
-1. Extract the ZIP to any folder (e.g., `C:\BijoyTypingMaster\`)
-2. Download font: **https://www.omicronlab.com/download/fonts/SutonnyMJ.ttf**
-3. Copy font to: `Resources\Fonts\SutonnyMJ.ttf` (inside extracted folder)
+#### Quick Build (Copy-Paste):
 
-### Step 3: Run! (0 seconds)
-Double-click **`BijoyTypingMaster.exe`** - that's it! 🎉
+**Step 1**: Install .NET SDK (one-time, ~5 minutes)
+```powershell
+# Open PowerShell as Administrator, run:
+winget install Microsoft.DotNet.SDK.8
+```
+
+**Step 2**: Clone and build (one-command!)
+```powershell
+# Open PowerShell (regular user), run:
+cd $HOME
+git clone https://github.com/imriadh/Bijoy-Typing-Master---Learn-Typing-Fast
+cd Bijoy-Typing-Master---Learn-Typing-Fast
+.\build-windows.ps1
+```
+
+The script will:
+- ✅ Check .NET SDK
+- ✅ Install MAUI workload (if needed)
+- ✅ Restore packages
+- ✅ Build self-contained app
+- ✅ Create ZIP package
+- ✅ Generate README
+
+**Output**: `BijoyTypingMaster-Portable.zip` ready to use!
 
 ---
 
