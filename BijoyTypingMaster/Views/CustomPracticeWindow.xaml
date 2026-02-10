@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="BijoyTypingMaster.Views.CustomPracticeWindow"
+             Title="Custom Text Practice 📝">
+
+    <Grid RowDefinitions="Auto,*" Padding="20" RowSpacing="15">
+
+        <!-- Create/Import Section -->
+        <Border Grid.Row="0"
+                BackgroundColor="#1e293b"
+                Stroke="#334155"
+                StrokeThickness="2"
+                Padding="20"
+                StrokeShape="RoundRectangle 12">
+            <VerticalStackLayout Spacing="15">
+                <Label Text="📝 CREATE NEW PRACTICE TEXT"
+                       FontSize="20"
+                       FontAttributes="Bold"
+                       TextColor="White"/>
+
+                <Entry x:Name="TitleEntry"
+                       Placeholder="Enter title..."
+                       FontSize="16"
+                       TextColor="White"
+                       PlaceholderColor="#94a3b8"
+                       BackgroundColor="#0f172a"/>
+
+                <Editor x:Name="TextEditor"
+                        Placeholder="Enter or paste Bangla text here (minimum 50 characters)..."
+                        FontSize="16"
+                        TextColor="White"
+                        PlaceholderColor="#94a3b8"
+                        BackgroundColor="#0f172a"
+                        HeightRequest="150"
+                        TextChanged="OnTextChanged"/>
+
+                <Label x:Name="CharCountLabel"
+                       Text="0 characters"
+                       FontSize="12"
+                       TextColor="#94a3b8"
+                       HorizontalOptions="End"/>
+
+                <HorizontalStackLayout Spacing="10">
+                    <Button Text="📁 Import from File"
+                            Clicked="OnImportClicked"
+                            BackgroundColor="#6366f1"
+                            TextColor="White"
+                            FontSize="14"
+                            Padding="15,10"
+                            HorizontalOptions="Start"/>
+
+                    <Button Text="💾 Save & Practice"
+                            Clicked="OnSaveClicked"
+                            BackgroundColor="#10b981"
+                            TextColor="White"
+                            FontSize="14"
+                            FontAttributes="Bold"
+                            Padding="15,10"
+                            HorizontalOptions="End"/>
+                </HorizontalStackLayout>
+            </VerticalStackLayout>
+        </Border>
+
+        <!-- Saved Texts Library -->
+        <Border Grid.Row="1"
+                BackgroundColor="#1e293b"
+                Stroke="#334155"
+                StrokeThickness="2"
+                Padding="20"
+                StrokeShape="RoundRectangle 12">
+            <VerticalStackLayout Spacing="15">
+                <Label Text="📚 SAVED PRACTICE TEXTS"
+                       FontSize="20"
+                       FontAttributes="Bold"
+                       TextColor="White"/>
+
+                <CollectionView x:Name="SavedTextsCollection">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Border BackgroundColor="#0f172a"
+                                    Padding="15"
+                                    Margin="0,5"
+                                    StrokeThickness="0"
+                                    StrokeShape="RoundRectangle 8">
+                                <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10">
+                                    <!-- Text Info -->
+                                    <VerticalStackLayout Grid.Column="0" Spacing="5">
+                                        <Label Text="{Binding Title}"
+                                               FontSize="16"
+                                               FontAttributes="Bold"
+                                               TextColor="White"/>
+                                        <Label Text="{Binding InfoText}"
+                                               FontSize="12"
+                                               TextColor="#94a3b8"/>
+                                        <Label Text="StatsText}"
+                                               FontSize="12"
+                                               TextColor="#10b981"/>
+                                    </VerticalStackLayout>
+
+                                    <!-- Practice Button -->
+                                    <Button Grid.Column="1"
+                                            Text="▶️"
+                                            FontSize="20"
+                                            BackgroundColor="#10b981"
+                                            TextColor="White"
+                                            WidthRequest="50"
+                                            HeightRequest="50"
+                                            CornerRadius="25"
+                                            Clicked="OnPracticeClicked"
+                                            CommandParameter="{Binding Id}"/>
+
+                                    <!-- Delete Button -->
+                                    <Button Grid.Column="2"
+                                            Text="🗑️"
+                                            FontSize="18"
+                                            BackgroundColor="#ef4444"
+                                            TextColor="White"
+                                            WidthRequest="50"
+                                            HeightRequest="50"
+                                            CornerRadius="25"
+                                            Clicked="OnDeleteClicked"
+                                            CommandParameter="{Binding Id}"/>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                    <CollectionView.EmptyView>
+                        <Label Text="No saved texts yet. Create your first custom practice text above!"
+                               FontSize="14"
+                               TextColor="#64748b"
+                               HorizontalOptions="Center"
+                               Margin="0,40"/>
+                    </CollectionView.EmptyView>
+                </CollectionView>
+            </VerticalStackLayout>
+        </Border>
+
+    </Grid>
+
+</ContentPage>
