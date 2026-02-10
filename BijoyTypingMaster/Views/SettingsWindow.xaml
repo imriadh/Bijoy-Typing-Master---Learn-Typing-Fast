@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="BijoyTypingMaster.Views.SettingsWindow"
+             Title="⚙️ Settings">
+    
+    <ScrollView>
+        <VerticalStackLayout Padding="30" Spacing="20">
+            
+            <!-- Header -->
+            <Label Text="⚙️ Settings" 
+                   FontSize="32" 
+                   FontAttributes="Bold" 
+                   HorizontalOptions="Center"
+                   Margin="0,0,0,20"/>
+
+            <!-- Display Settings Section -->
+            <Border StrokeThickness="2" 
+                    Stroke="{StaticResource Primary}"
+                    Background="{StaticResource Gray950}"
+                    Padding="20"
+                    Margin="0,10">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10"/>
+                </Border.StrokeShape>
+                
+                <VerticalStackLayout Spacing="15">
+                    <Label Text="🎨 Display Settings" FontSize="20" FontAttributes="Bold"/>
+                    
+                    <!-- Font Size -->
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                        <Label Text="Font Size:" VerticalOptions="Center" Grid.Column="0"/>
+                        <HorizontalStackLayout Grid.Column="1" Spacing="10">
+                            <Label x:Name="FontSizeLabel" 
+                                   Text="32" 
+                                   VerticalOptions="Center" 
+                                   WidthRequest="40"
+                                   HorizontalTextAlignment="Center"/>
+                            <Slider x:Name="FontSizeSlider" 
+                                    Minimum="16" 
+                                    Maximum="64" 
+                                    Value="32"
+                                    WidthRequest="200"
+                                    ValueChanged="OnFontSizeChanged"/>
+                        </HorizontalStackLayout>
+                    </Grid>
+
+                    <!-- Theme -->
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                        <Label Text="Theme:" VerticalOptions="Center" Grid.Column="0"/>
+                        <Picker x:Name="ThemePicker" 
+                                Grid.Column="1"
+                                WidthRequest="150"
+                                SelectedIndexChanged="OnThemeChanged">
+                            <Picker.Items>
+                                <x:String>Light</x:String>
+                                <x:String>Dark</x:String>
+                            </Picker.Items>
+                        </Picker>
+                    </Grid>
+
+                    <!-- Show Virtual Keyboard -->
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                        <Label Text="Show Virtual Keyboard:" VerticalOptions="Center" Grid.Column="0"/>
+                        <CheckBox x:Name="ShowKeyboardCheckbox" 
+                                  Grid.Column="1"
+                                  CheckedChanged="OnShowKeyboardChanged"/>
+                    </Grid>
+
+                    <!-- Show Finger Guide -->
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                        <Label Text="Show Finger Guide:" VerticalOptions="Center" Grid.Column="0"/>
+                        <CheckBox x:Name="ShowFingerGuideCheckbox" 
+                                  Grid.Column="1"
+                                  CheckedChanged="OnShowFingerGuideChanged"/>
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Practice Settings Section -->
+            <Border StrokeThickness="2" 
+                    Stroke="{StaticResource Primary}"
+                    Background="{StaticResource Gray950}"
+                    Padding="20"
+                    Margin="0,10">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10"/>
+                </Border.StrokeShape>
+                
+                <VerticalStackLayout Spacing="15">
+                    <Label Text="📝 Practice Settings" FontSize="20" FontAttributes="Bold"/>
+                    
+                    <!-- Preferred Layout -->
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                        <Label Text="Preferred Keyboard Layout:" VerticalOptions="Center" Grid.Column="0"/>
+                        <Picker x:Name="LayoutPicker" 
+                                Grid.Column="1"
+                                WidthRequest="150"
+                                SelectedIndexChanged="OnLayoutChanged">
+                            <Picker.Items>
+                                <x:String>Bijoy</x:String>
+                                <x:String>Unicode</x:String>
+                            </Picker.Items>
+                        </Picker>
+                    </Grid>
+
+                    <!-- Sound Enabled -->
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                        <Label Text="Enable Sound Effects:" VerticalOptions="Center" Grid.Column="0"/>
+                        <CheckBox x:Name="SoundCheckbox" 
+                                  Grid.Column="1"
+                                  CheckedChanged="OnSoundChanged"/>
+                    </Grid>
+
+                    <!-- Auto-Advance -->
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                        <Label Text="Auto-advance to Next Lesson:" VerticalOptions="Center" Grid.Column="0"/>
+                        <CheckBox x:Name="AutoAdvanceCheckbox" 
+                                  Grid.Column="1"
+                                  CheckedChanged="OnAutoAdvanceChanged"/>
+                    </Grid>
+
+                    <!-- Minimum Accuracy -->
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                        <Label Text="Min. Accuracy to Pass (%):" VerticalOptions="Center" Grid.Column="0"/>
+                        <HorizontalStackLayout Grid.Column="1" Spacing="10">
+                            <Label x:Name="MinAccuracyLabel" 
+                                   Text="85" 
+                                   VerticalOptions="Center" 
+                                   WidthRequest="40"
+                                   HorizontalTextAlignment="Center"/>
+                            <Slider x:Name="MinAccuracySlider" 
+                                    Minimum="70" 
+                                    Maximum="100" 
+                                    Value="85"
+                                    WidthRequest="200"
+                                    ValueChanged="OnMinAccuracyChanged"/>
+                        </HorizontalStackLayout>
+                    </Grid>
+
+                    <!-- Minimum WPM -->
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                        <Label Text="Min. WPM to Pass:" VerticalOptions="Center" Grid.Column="0"/>
+                        <HorizontalStackLayout Grid.Column="1" Spacing="10">
+                            <Label x:Name="MinWpmLabel" 
+                                   Text="20" 
+                                   VerticalOptions="Center" 
+                                   WidthRequest="40"
+                                   HorizontalTextAlignment="Center"/>
+                            <Slider x:Name="MinWpmSlider" 
+                                    Minimum="10" 
+                                    Maximum="50" 
+                                    Value="20"
+                                    WidthRequest="200"
+                                    ValueChanged="OnMinWpmChanged"/>
+                        </HorizontalStackLayout>
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Speed Test Settings Section -->
+            <Border StrokeThickness="2" 
+                    Stroke="{StaticResource Primary}"
+                    Background="{StaticResource Gray950}"
+                    Padding="20"
+                    Margin="0,10">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10"/>
+                </Border.StrokeShape>
+                
+                <VerticalStackLayout Spacing="15">
+                    <Label Text="⚡ Speed Test Settings" FontSize="20" FontAttributes="Bold"/>
+                    
+                    <!-- Speed Test Duration -->
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                        <Label Text="Test Duration (seconds):" VerticalOptions="Center" Grid.Column="0"/>
+                        <Picker x:Name="DurationPicker" 
+                                Grid.Column="1"
+                                WidthRequest="150"
+                                SelectedIndexChanged="OnDurationChanged">
+                            <Picker.Items>
+                                <x:String>30</x:String>
+                                <x:String>60</x:String>
+                                <x:String>120</x:String>
+                                <x:String>180</x:String>
+                                <x:String>300</x:String>
+                            </Picker.Items>
+                        </Picker>
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- User Profile Section -->
+            <Border StrokeThickness="2" 
+                    Stroke="{StaticResource Primary}"
+                    Background="{StaticResource Gray950}"
+                    Padding="20"
+                    Margin="0,10">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10"/>
+                </Border.StrokeShape>
+                
+                <VerticalStackLayout Spacing="15">
+                    <Label Text="👤 User Profile" FontSize="20" FontAttributes="Bold"/>
+                    
+                    <!-- User Name -->
+                    <Grid ColumnDefinitions="*,2*" ColumnSpacing="10">
+                        <Label Text="Name:" VerticalOptions="Center" Grid.Column="0"/>
+                        <Entry x:Name="UserNameEntry" 
+                               Grid.Column="1"
+                               Placeholder="Enter your name"
+                               TextChanged="OnUserNameChanged"/>
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Action Buttons -->
+            <HorizontalStackLayout Spacing="20" HorizontalOptions="Center" Margin="0,20,0,0">
+                <Button Text="💾 Save Settings" 
+                        Clicked="OnSaveClicked"
+                        WidthRequest="200"
+                        HeightRequest="50"/>
+                        
+                <Button Text="🔄 Reset to Defaults" 
+                        Clicked="OnResetClicked"
+                        WidthRequest="200"
+                        HeightRequest="50"
+                        BackgroundColor="{StaticResource Secondary}"/>
+            </HorizontalStackLayout>
+
+        </VerticalStackLayout>
+    </ScrollView>
+    
+</ContentPage>

@@ -1,10 +1,22 @@
+using BijoyTypingMaster.Services;
+
 namespace BijoyTypingMaster.Views;
 
 public partial class MainPage : ContentPage
 {
-    public MainPage()
+    private readonly DatabaseManager _dbManager;
+    private readonly SettingsManager _settingsManager;
+    private readonly CertificateGenerator _certGenerator;
+
+    public MainPage(
+        DatabaseManager dbManager,
+        SettingsManager settingsManager,
+        CertificateGenerator certGenerator)
     {
         InitializeComponent();
+        _dbManager = dbManager;
+        _settingsManager = settingsManager;
+        _certGenerator = certGenerator;
     }
 
     private async void OnBijoyPracticeClicked(object sender, EventArgs e)
@@ -25,5 +37,17 @@ public partial class MainPage : ContentPage
     private async void OnSettingsClicked(object sender, EventArgs e)
     {
         await Navigation.PushAsync(new PaymentWindow());
+    }
+
+    private async void OnSpeedTestClicked(object sender, EventArgs e)
+    {
+        await Navigation.PushAsync(
+            new SpeedTestWindow(_dbManager, _settingsManager, _certGenerator)
+        );
+    }
+
+    private async void OnSettingsPageClicked(object sender, EventArgs e)
+    {
+        await Navigation.PushAsync(new SettingsWindow(_settingsManager));
     }
 }

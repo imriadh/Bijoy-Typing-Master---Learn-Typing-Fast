@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="BijoyTypingMaster.Views.SpeedTestWindow"
+             Title="⚡ Speed Test">
+    
+    <Grid Padding="30" RowDefinitions="Auto,*,Auto">
+        
+        <!-- Header Section -->
+        <VerticalStackLayout Grid.Row="0" Spacing="15">
+            <Label Text="⚡ Speed Test Challenge" 
+                   FontSize="32" 
+                   FontAttributes="Bold" 
+                   HorizontalOptions="Center"/>
+
+            <!-- Timer and Stats Bar -->
+            <Border StrokeThickness="2" 
+                    Stroke="{StaticResource Primary}"
+                    Background="{StaticResource Gray950}"
+                    Padding="20">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10"/>
+                </Border.StrokeShape>
+                
+                <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="20">
+                    <!-- Time Remaining -->
+                    <VerticalStackLayout Grid.Column="0" HorizontalOptions="Center">
+                        <Label Text="⏱️ Time" 
+                               FontSize="14" 
+                               HorizontalOptions="Center"
+                               Opacity="0.7"/>
+                        <Label x:Name="TimerLabel" 
+                               Text="60" 
+                               FontSize="28" 
+                               FontAttributes="Bold"
+                               HorizontalOptions="Center"
+                               TextColor="{StaticResource Primary}"/>
+                    </VerticalStackLayout>
+
+                    <!-- WPM -->
+                    <VerticalStackLayout Grid.Column="1" HorizontalOptions="Center">
+                        <Label Text="🚀 WPM" 
+                               FontSize="14" 
+                               HorizontalOptions="Center"
+                               Opacity="0.7"/>
+                        <Label x:Name="WpmLabel" 
+                               Text="0" 
+                               FontSize="28" 
+                               FontAttributes="Bold"
+                               HorizontalOptions="Center"
+                               TextColor="{StaticResource Secondary}"/>
+                    </VerticalStackLayout>
+
+                    <!-- Accuracy -->
+                    <VerticalStackLayout Grid.Column="2" HorizontalOptions="Center">
+                        <Label Text="✅ Accuracy" 
+                               FontSize="14" 
+                               HorizontalOptions="Center"
+                               Opacity="0.7"/>
+                        <Label x:Name="AccuracyLabel" 
+                               Text="100%" 
+                               FontSize="28" 
+                               FontAttributes="Bold"
+                               HorizontalOptions="Center"
+                               TextColor="{StaticResource Tertiary}"/>
+                    </VerticalStackLayout>
+
+                    <!-- Progress -->
+                    <VerticalStackLayout Grid.Column="3" HorizontalOptions="Center">
+                        <Label Text="📊 Progress" 
+                               FontSize="14" 
+                               HorizontalOptions="Center"
+                               Opacity="0.7"/>
+                        <Label x:Name="ProgressLabel" 
+                               Text="0%" 
+                               FontSize="28" 
+                               FontAttributes="Bold"
+                               HorizontalOptions="Center"/>
+                    </VerticalStackLayout>
+                </Grid>
+            </Border>
+        </VerticalStackLayout>
+
+        <!-- Main Typing Area -->
+        <ScrollView Grid.Row="1" Margin="0,20">
+            <VerticalStackLayout Spacing="20">
+                
+                <!-- Test Text Display -->
+                <Border StrokeThickness="3" 
+                        Stroke="{StaticResource Primary}"
+                        Background="{StaticResource Gray900}"
+                        Padding="30"
+                        MinimumHeightRequest="200">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="15"/>
+                    </Border.StrokeShape>
+                    
+                    <Label x:Name="TestTextLabel" 
+                           Text="Click START to begin the speed test..."
+                           FontSize="24"
+                           FontFamily="SutonnyMJ"
+                           LineHeight="1.5"
+                           HorizontalOptions="Fill"/>
+                </Border>
+
+                <!-- User Input (Hidden) -->
+                <Entry x:Name="HiddenEntry"
+                       IsVisible="False"
+                       TextChanged="OnTextChanged"/>
+
+                <!-- Results Panel (Initially Hidden) -->
+                <Border x:Name="ResultsPanel"
+                        IsVisible="False"
+                        StrokeThickness="3" 
+                        Stroke="{StaticResource Secondary}"
+                        Background="{StaticResource Gray950}"
+                        Padding="30">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="15"/>
+                    </Border.StrokeShape>
+                    
+                    <VerticalStackLayout Spacing="15">
+                        <Label Text="🎉 Test Complete!" 
+                               FontSize="28" 
+                               FontAttributes="Bold"
+                               HorizontalOptions="Center"/>
+
+                        <!-- Rating Stars -->
+                        <Label x:Name="StarsLabel" 
+                               FontSize="40"
+                               HorizontalOptions="Center"/>
+
+                        <!-- Performance Rating -->
+                        <Label x:Name="RatingLabel" 
+                               FontSize="22"
+                               FontAttributes="Bold"
+                               HorizontalOptions="Center"
+                               TextColor="{StaticResource Primary}"/>
+
+                        <!-- Detailed Stats -->
+                        <Grid ColumnDefinitions="*,*" 
+                              RowDefinitions="Auto,Auto,Auto,Auto" 
+                              ColumnSpacing="20" 
+                              RowSpacing="10"
+                              Margin="0,20,0,0">
+                            
+                            <Label Grid.Row="0" Grid.Column="0" 
+                                   Text="Gross WPM:" 
+                                   FontSize="16"/>
+                            <Label x:Name="GrossWpmLabel" 
+                                   Grid.Row="0" Grid.Column="1" 
+                                   FontSize="16" 
+                                   FontAttributes="Bold"
+                                   HorizontalOptions="End"/>
+
+                            <Label Grid.Row="1" Grid.Column="0" 
+                                   Text="Net WPM:" 
+                                   FontSize="16"/>
+                            <Label x:Name="NetWpmLabel" 
+                                   Grid.Row="1" Grid.Column="1" 
+                                   FontSize="16" 
+                                   FontAttributes="Bold"
+                                   HorizontalOptions="End"/>
+
+                            <Label Grid.Row="2" Grid.Column="0" 
+                                   Text="Accuracy:" 
+                                   FontSize="16"/>
+                            <Label x:Name="FinalAccuracyLabel" 
+                                   Grid.Row="2" Grid.Column="1" 
+                                   FontSize="16" 
+                                   FontAttributes="Bold"
+                                   HorizontalOptions="End"/>
+
+                            <Label Grid.Row="3" Grid.Column="0" 
+                                   Text="Errors:" 
+                                   FontSize="16"/>
+                            <Label x:Name="ErrorsLabel" 
+                                   Grid.Row="3" Grid.Column="1" 
+                                   FontSize="16" 
+                                   FontAttributes="Bold"
+                                   HorizontalOptions="End"/>
+                        </Grid>
+
+                        <!-- Action Buttons -->
+                        <HorizontalStackLayout Spacing="15" 
+                                             HorizontalOptions="Center" 
+                                             Margin="0,20,0,0">
+                            <Button Text="🏆 Generate Certificate" 
+                                    Clicked="OnGenerateCertificateClicked"
+                                    WidthRequest="200"/>
+                            <Button Text="🔄 Retry" 
+                                    Clicked="OnRetryClicked"
+                                    WidthRequest="120"/>
+                        </HorizontalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- Bottom Control Panel -->
+        <Border Grid.Row="2" 
+                StrokeThickness="2" 
+                Stroke="{StaticResource Primary}"
+                Padding="20"
+                Margin="0,20,0,0">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="10"/>
+            </Border.StrokeShape>
+            
+            <HorizontalStackLayout Spacing="20" HorizontalOptions="Center">
+                <Button x:Name="StartButton"
+                        Text="▶️ START" 
+                        Clicked="OnStartClicked"
+                        WidthRequest="150"
+                        HeightRequest="60"
+                        FontSize="18"
+                        FontAttributes="Bold"/>
+                        
+                <Button x:Name="StopButton"
+                        Text="⏸️ STOP" 
+                        Clicked="OnStopClicked"
+                        WidthRequest="150"
+                        HeightRequest="60"
+                        FontSize="18"
+                        IsEnabled="False"
+                        BackgroundColor="{StaticResource Secondary}"/>
+
+                <Button Text="🏠 Back to Home" 
+                        Clicked="OnBackClicked"
+                        WidthRequest="180"
+                        HeightRequest="60"/>
+            </HorizontalStackLayout>
+        </Border>
+
+    </Grid>
+    
+</ContentPage>

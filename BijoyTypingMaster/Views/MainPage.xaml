@@ -48,6 +48,19 @@
                 Clicked="OnSettingsClicked"
                 HorizontalOptions="Center" />
 
+            <Button
+                x:Name="SpeedTestBtn"
+                Text="⚡ Speed Test"
+                Clicked="OnSpeedTestClicked"
+                HorizontalOptions="Center"
+                BackgroundColor="{StaticResource Secondary}" />
+
+            <Button
+                x:Name="SettingsPageBtn"
+                Text="⚙️ Settings"
+                Clicked="OnSettingsPageClicked"
+                HorizontalOptions="Center" />
+
         </VerticalStackLayout>
     </ScrollView>
 

@@ -21,12 +21,18 @@ public static class MauiProgram
         // Register Services
         builder.Services.AddSingleton<DatabaseManager>();
         builder.Services.AddSingleton<LicenseManager>();
+        builder.Services.AddSingleton<SettingsManager>();
+        builder.Services.AddSingleton<LessonManager>();
+        builder.Services.AddSingleton<CertificateGenerator>();
         builder.Services.AddTransient<TypingEngine>();
+        builder.Services.AddTransient<SpeedTestEngine>();
 
         // Register Views
         builder.Services.AddTransient<MainPage>();
         builder.Services.AddTransient<PracticeWindow>();
         builder.Services.AddTransient<PaymentWindow>();
+        builder.Services.AddTransient<SettingsWindow>();
+        builder.Services.AddTransient<SpeedTestWindow>();
 
 #if DEBUG
         builder.Logging.AddDebug();
