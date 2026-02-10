@@ -24,6 +24,7 @@ public static class MauiProgram
         builder.Services.AddSingleton<SettingsManager>();
         builder.Services.AddSingleton<LessonManager>();
         builder.Services.AddSingleton<CertificateGenerator>();
+        builder.Services.AddSingleton<XPManager>();
         builder.Services.AddTransient<TypingEngine>();
         builder.Services.AddTransient<SpeedTestEngine>();
 
