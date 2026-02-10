@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="BijoyTypingMaster.Controls.XPBar">
+    <Border BackgroundColor="#1a1a2e"
+            Stroke="#16213e"
+            StrokeThickness="2"
+            Padding="15,10"
+            Margin="0,0,0,10"
+            StrokeShape="RoundRectangle 10">
+        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="15">
+            <!-- Level Badge -->
+            <Border Grid.Column="0"
+                    BackgroundColor="#ffd700"
+                    WidthRequest="60"
+                    HeightRequest="60"
+                    StrokeThickness="3"
+                    Stroke="#ffed4e"
+                    StrokeShape="RoundRectangle 30">
+                <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center">
+                    <Label Text="LEVEL"
+                           FontSize="10"
+                           FontAttributes="Bold"
+                           TextColor="#1a1a2e"
+                           HorizontalOptions="Center"/>
+                    <Label x:Name="LevelLabel"
+                           Text="1"
+                           FontSize="24"
+                           FontAttributes="Bold"
+                           TextColor="#1a1a2e"
+                           HorizontalOptions="Center"/>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- XP Progress Section -->
+            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="5">
+                <!-- XP Text -->
+                <HorizontalStackLayout Spacing="10">
+                    <Label x:Name="XPLabel"
+                           Text="0 XP"
+                           FontSize="16"
+                           FontAttributes="Bold"
+                           TextColor="White"
+                           VerticalOptions="Center"/>
+                    <Label x:Name="ProgressLabel"
+                           Text="(0/100 to next level)"
+                           FontSize="12"
+                           TextColor="#94a3b8"
+                           VerticalOptions="Center"/>
+                </HorizontalStackLayout>
+
+                <!-- Progress Bar -->
+                <Border BackgroundColor="#2a2a4e"
+                        HeightRequest="24"
+                        StrokeThickness="0"
+                        StrokeShape="RoundRectangle 12">
+                    <Grid>
+                        <!-- Progress Fill -->
+                        <BoxView x:Name="ProgressFill"
+                                 Color="#4ade80"
+                                 HorizontalOptions="Start"
+                                 WidthRequest="0"
+                                 CornerRadius="12"/>
+                        <!-- Percentage Label -->
+                        <Label x:Name="PercentageLabel"
+                               Text="0%"
+                               FontSize="12"
+                               FontAttributes="Bold"
+                               TextColor="White"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"/>
+                    </Grid>
+                </Border>
+            </VerticalStackLayout>
+
+            <!-- Streak Indicator -->
+            <Border Grid.Column="2"
+                    BackgroundColor="#ff6b35"
+                    Padding="12,8"
+                    StrokeThickness="2"
+                    Stroke="#ff8c61"
+                    StrokeShape="RoundRectangle 8">
+                <HorizontalStackLayout Spacing="8">
+                    <Label Text="🔥"
+                           FontSize="24"
+                           VerticalOptions="Center"/>
+                    <VerticalStackLayout Spacing="0">
+                        <Label x:Name="StreakLabel"
+                               Text="0"
+                               FontSize="18"
+                               FontAttributes="Bold"
+                               TextColor="White"
+                               HorizontalOptions="Center"/>
+                        <Label Text="DAY STREAK"
+                               FontSize="9"
+                               FontAttributes="Bold"
+                               TextColor="White"
+                               HorizontalOptions="Center"/>
+                    </VerticalStackLayout>
+                </HorizontalStackLayout>
+            </Border>
+        </Grid>
+    </Border>
+</ContentView>

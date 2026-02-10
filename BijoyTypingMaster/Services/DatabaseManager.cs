@@ -81,6 +81,43 @@ public class DatabaseManager
                 command.ExecuteNonQuery();
             }
 
+            // Create UserProfile table
+            string createUserProfileTable = @"
+                CREATE TABLE IF NOT EXISTS UserProfile (
+                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    UserId INTEGER DEFAULT 1,
+                    TotalXP INTEGER DEFAULT 0,
+                    CurrentLevel INTEGER DEFAULT 1,
+                    JoinDate TEXT NOT NULL,
+                    LastActive TEXT,
+                    Streak INTEGER DEFAULT 0,
+                    TotalLessonsCompleted INTEGER DEFAULT 0,
+                    TotalTestsCompleted INTEGER DEFAULT 0,
+                    TotalAchievementsUnlocked INTEGER DEFAULT 0,
+                    TotalPracticeTimeMinutes INTEGER DEFAULT 0
+                );";
+
+            using (var command = new SQLiteCommand(createUserProfileTable, connection))
+            {
+                command.ExecuteNonQuery();
+            }
+
+            // Create XPHistory table
+            string createXPHistoryTable = @"
+                CREATE TABLE IF NOT EXISTS XPHistory (
+                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    UserId INTEGER DEFAULT 1,
+                    Date TEXT NOT NULL,
+                    Amount INTEGER NOT NULL,
+                    Source TEXT NOT NULL,
+                    Description TEXT
+                );";
+
+            using (var command = new SQLiteCommand(createXPHistoryTable, connection))
+            {
+                command.ExecuteNonQuery();
+            }
+
             // Insert sample lessons if table is empty
             InsertSampleLessons(connection);
 
@@ -371,5 +408,152 @@ public class DatabaseManager
         }
 
         return results;
+    }
+
+    // ===== XP SYSTEM METHODS =====
+
+    // Create new user profile
+    public async Task CreateUserProfileAsync(UserProfile profile)
+    {
+        using var connection = new SQLiteConnection(_connectionString);
+        await connection.OpenAsync();
+
+        string query = @"
+            INSERT INTO UserProfile (UserId, TotalXP, CurrentLevel, JoinDate, LastActive, Streak,
+                                   TotalLessonsCompleted, TotalTestsCompleted, TotalAchievementsUnlocked, TotalPracticeTimeMinutes)
+            VALUES (@UserId, @TotalXP, @CurrentLevel, @JoinDate, @LastActive, @Streak,
+                    @TotalLessonsCompleted, @TotalTestsCompleted, @TotalAchievementsUnlocked, @TotalPracticeTimeMinutes)";
+
+        using var command = new SQLiteCommand(query, connection);
+        command.Parameters.AddWithValue("@UserId", profile.UserId);
+        command.Parameters.AddWithValue("@TotalXP", profile.TotalXP);
+        command.Parameters.AddWithValue("@CurrentLevel", profile.CurrentLevel);
+        command.Parameters.AddWithValue("@JoinDate", profile.JoinDate.ToString("yyyy-MM-dd HH:mm:ss"));
+        command.Parameters.AddWithValue("@LastActive", profile.LastActive.ToString("yyyy-MM-dd HH:mm:ss"));
+        command.Parameters.AddWithValue("@Streak", profile.Streak);
+        command.Parameters.AddWithValue("@TotalLessonsCompleted", profile.TotalLessonsCompleted);
+        command.Parameters.AddWithValue("@TotalTestsCompleted", profile.TotalTestsCompleted);
+        command.Parameters.AddWithValue("@TotalAchievementsUnlocked", profile.TotalAchievementsUnlocked);
+        command.Parameters.AddWithValue("@TotalPracticeTimeMinutes", profile.TotalPracticeTimeMinutes);
+
+        await command.ExecuteNonQueryAsync();
+    }
+
+    // Get user profile
+    public async Task<UserProfile?> GetUserProfileAsync(int userId = 1)
+    {
+        using var connection = new SQLiteConnection(_connectionString);
+        await connection.OpenAsync();
+
+        string query = "SELECT * FROM UserProfile WHERE UserId = @UserId LIMIT 1";
+        using var command = new SQLiteCommand(query, connection);
+        command.Parameters.AddWithValue("@UserId", userId);
+
+        using var reader = await command.ExecuteReaderAsync();
+        if (await reader.ReadAsync())
+        {
+            return new UserProfile
+            {
+                Id = reader.GetInt32(0),
+                UserId = reader.GetInt32(1),
+                TotalXP = reader.GetInt32(2),
+                CurrentLevel = reader.GetInt32(3),
+                JoinDate = DateTime.Parse(reader.GetString(4)),
+                LastActive = reader.IsDBNull(5) ? DateTime.Now : DateTime.Parse(reader.GetString(5)),
+                Streak = reader.GetInt32(6),
+                TotalLessonsCompleted = reader.GetInt32(7),
+                TotalTestsCompleted = reader.GetInt32(8),
+                TotalAchievementsUnlocked = reader.GetInt32(9),
+                TotalPracticeTimeMinutes = reader.GetInt32(10)
+            };
+        }
+
+        return null;
+    }
+
+    // Update user profile
+    public async Task UpdateUserProfileAsync(UserProfile profile)
+    {
+        using var connection = new SQLiteConnection(_connectionString);
+        await connection.OpenAsync();
+
+        string query = @"
+            UPDATE UserProfile 
+            SET TotalXP = @TotalXP,
+                CurrentLevel = @CurrentLevel,
+                LastActive = @LastActive,
+                Streak = @Streak,
+                TotalLessonsCompleted = @TotalLessonsCompleted,
+                TotalTestsCompleted = @TotalTestsCompleted,
+                TotalAchievementsUnlocked = @TotalAchievementsUnlocked,
+                TotalPracticeTimeMinutes = @TotalPracticeTimeMinutes
+            WHERE UserId = @UserId";
+
+        using var command = new SQLiteCommand(query, connection);
+        command.Parameters.AddWithValue("@TotalXP", profile.TotalXP);
+        command.Parameters.AddWithValue("@CurrentLevel", profile.CurrentLevel);
+        command.Parameters.AddWithValue("@LastActive", profile.LastActive.ToString("yyyy-MM-dd HH:mm:ss"));
+        command.Parameters.AddWithValue("@Streak", profile.Streak);
+        command.Parameters.AddWithValue("@TotalLessonsCompleted", profile.TotalLessonsCompleted);
+        command.Parameters.AddWithValue("@TotalTestsCompleted", profile.TotalTestsCompleted);
+        command.Parameters.AddWithValue("@TotalAchievementsUnlocked", profile.TotalAchievementsUnlocked);
+        command.Parameters.AddWithValue("@TotalPracticeTimeMinutes", profile.TotalPracticeTimeMinutes);
+        command.Parameters.AddWithValue("@UserId", profile.UserId);
+
+        await command.ExecuteNonQueryAsync();
+    }
+
+    // Add XP history entry
+    public async Task AddXPHistoryAsync(XPHistory history)
+    {
+        using var connection = new SQLiteConnection(_connectionString);
+        await connection.OpenAsync();
+
+        string query = @"
+            INSERT INTO XPHistory (UserId, Date, Amount, Source, Description)
+            VALUES (@UserId, @Date, @Amount, @Source, @Description)";
+
+        using var command = new SQLiteCommand(query, connection);
+        command.Parameters.AddWithValue("@UserId", history.UserId);
+        command.Parameters.AddWithValue("@Date", history.Date.ToString("yyyy-MM-dd HH:mm:ss"));
+        command.Parameters.AddWithValue("@Amount", history.Amount);
+        command.Parameters.AddWithValue("@Source", history.Source);
+        command.Parameters.AddWithValue("@Description", history.Description ?? string.Empty);
+
+        await command.ExecuteNonQueryAsync();
+    }
+
+    // Get XP history
+    public async Task<List<XPHistory>> GetXPHistoryAsync(DateTime startDate, int userId = 1)
+    {
+        var history = new List<XPHistory>();
+
+        using var connection = new SQLiteConnection(_connectionString);
+        await connection.OpenAsync();
+
+        string query = @"
+            SELECT * FROM XPHistory 
+            WHERE UserId = @UserId AND Date >= @StartDate
+            ORDER BY Date DESC";
+
+        using var command = new SQLiteCommand(query, connection);
+        command.Parameters.AddWithValue("@UserId", userId);
+        command.Parameters.AddWithValue("@StartDate", startDate.ToString("yyyy-MM-dd HH:mm:ss"));
+
+        using var reader = await command.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
+        {
+            history.Add(new XPHistory
+            {
+                Id = reader.GetInt32(0),
+                UserId = reader.GetInt32(1),
+                Date = DateTime.Parse(reader.GetString(2)),
+                Amount = reader.GetInt32(3),
+                Source = reader.GetString(4),
+                Description = reader.IsDBNull(5) ? string.Empty : reader.GetString(5)
+            });
+        }
+
+        return history;
     }
 }
