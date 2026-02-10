@@ -1,34 +1,70 @@
-# 📥 Download Pre-Built App (No Coding Required!)
+# 📥 Download Pre-Built App (No Installation Required!)
 
-## ⚡ Quick Download - 3 Options
+## ⚡ PORTABLE VERSION - Just Like an APK! 🎉
 
-### Option 1: GitHub Actions Build (Recommended) ✨
-GitHub automatically builds the app on every push!
+**No .NET installation needed! No admin rights required! Works from USB drive!**
 
-**Steps:**
-1. Go to: https://github.com/imriadh/Bijoy-Typing-Master---Learn-Typing-Fast/actions
-2. Click on the latest **"Build Windows App"** workflow run (green checkmark ✅)
-3. Scroll to **"Artifacts"** section at bottom
-4. Download **"BijoyTypingMaster-Windows-Package.zip"** (or "BijoyTypingMaster-Windows" for unzipped files)
-5. Extract the ZIP file
-6. **IMPORTANT**: Add `SutonnyMJ.ttf` font to the extracted folder (see Font Setup below)
-7. Double-click `BijoyTypingMaster.exe` to run!
+This is a **self-contained package** with everything included - just download, add font, and run!
 
-### Option 2: Build on Windows Machine
-If you have a Windows PC:
+---
 
-```powershell
-git clone https://github.com/imriadh/Bijoy-Typing-Master---Learn-Typing-Fast
-cd Bijoy-Typing-Master---Learn-Typing-Fast\BijoyTypingMaster
-dotnet build -f net6.0-windows10.0.19041.0 -c Release
-```
+## 🚀 Quick Start (3 Steps)
 
-Executable will be in: `bin\Release\net6.0-windows10.0.19041.0\win10-x64\`
+### Step 1: Download the App (5-10 minutes)
+1. Go to: **https://github.com/imriadh/Bijoy-Typing-Master---Learn-Typing-Fast/actions**
+2. Click the latest **"Build Windows App"** with green ✅
+3. Scroll to **"Artifacts"** section
+4. Download **"BijoyTypingMaster-Portable-NoInstall.zip"** (~150-250 MB)
 
-### Option 3: Visual Studio 2022
-1. Install Visual Studio 2022 with .NET MAUI workload
-2. Open `BijoyTypingMaster.csproj`
-3. Press F5 to build and run
+### Step 2: Extract & Add Font (1 minute)
+1. Extract the ZIP to any folder (e.g., `C:\BijoyTypingMaster\`)
+2. Download font: **https://www.omicronlab.com/download/fonts/SutonnyMJ.ttf**
+3. Copy font to: `Resources\Fonts\SutonnyMJ.ttf` (inside extracted folder)
+
+### Step 3: Run! (0 seconds)
+Double-click **`BijoyTypingMaster.exe`** - that's it! 🎉
+
+---
+
+## ✅ What's Included
+
+Everything you need is in the ZIP:
+- ✅ BijoyTypingMaster.exe (main app)
+- ✅ .NET 6 Runtime (no separate install needed!)
+- ✅ All dependencies bundled
+- ✅ Resources folder structure
+- ✅ README.txt with instructions
+
+**Total size**: ~150-250 MB (similar to a large mobile app)
+
+---
+
+## 📱 Just Like Android APK!
+
+| Android APK | Windows Portable App |
+|-------------|---------------------|
+| Download .apk file | Download .zip file |
+| No Google Play needed | No Microsoft Store needed |
+| Just install & run | Just extract & run |
+| ~50-200 MB | ~150-250 MB |
+| Works offline | Works offline |
+
+---
+
+## 🎯 System Requirements
+
+### Minimum:
+- **OS**: Windows 10 (version 1809+) or Windows 11
+- **RAM**: 2 GB
+- **Storage**: 500 MB free space
+- **Internet**: Only for download (runs offline after)
+
+### ✅ NOT Required:
+- ❌ No Visual Studio
+- ❌ No .NET SDK installation
+- ❌ No MAUI workload
+- ❌ No admin rights (runs as regular user)
+- ❌ No dependencies to manage
 
 ---
 
