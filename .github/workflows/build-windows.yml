@@ -1,0 +1,54 @@
+name: Build Windows App
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  build:
+    runs-on: windows-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'  # Use .NET 8 (compatible with .NET 6 MAUI)
+
+    - name: Install MAUI workload
+      run: dotnet workload install maui
+
+    - name: Restore dependencies
+      run: dotnet restore BijoyTypingMaster/BijoyTypingMaster.csproj
+
+    - name: Build Windows App
+      run: dotnet build BijoyTypingMaster/BijoyTypingMaster.csproj -f net6.0-windows10.0.19041.0 -c Release
+
+    - name: Publish Windows App
+      run: dotnet publish BijoyTypingMaster/BijoyTypingMaster.csproj -f net6.0-windows10.0.19041.0 -c Release -o ./publish
+
+    - name: Upload Build Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: BijoyTypingMaster-Windows
+        path: ./publish/**/*
+        retention-days: 30
+
+    - name: Create Release Package
+      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      run: |
+        cd publish
+        Compress-Archive -Path * -DestinationPath ../BijoyTypingMaster-Windows.zip
+
+    - name: Upload Release Package
+      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      uses: actions/upload-artifact@v4
+      with:
+        name: BijoyTypingMaster-Windows-Package
+        path: BijoyTypingMaster-Windows.zip
+        retention-days: 90
