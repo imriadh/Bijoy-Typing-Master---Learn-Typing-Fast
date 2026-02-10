@@ -118,6 +118,28 @@ public class DatabaseManager
                 command.ExecuteNonQuery();
             }
 
+            // Create DailyChallenges table
+            string createDailyChallengesTable = @"
+                CREATE TABLE IF NOT EXISTS DailyChallenges (
+                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    Date TEXT NOT NULL,
+                    ChallengeType TEXT NOT NULL,
+                    TargetText TEXT NOT NULL,
+                    TargetWPM INTEGER NOT NULL,
+                    TargetAccuracy INTEGER NOT NULL,
+                    TimeLimit INTEGER NOT NULL,
+                    IsCompleted INTEGER DEFAULT 0,
+                    CompletedAt TEXT,
+                    AchievedWPM INTEGER DEFAULT 0,
+                    AchievedAccuracy INTEGER DEFAULT 0,
+                    XPEarned INTEGER DEFAULT 0
+                );";
+
+            using (var command = new SQLiteCommand(createDailyChallengesTable, connection))
+            {
+                command.ExecuteNonQuery();
+            }
+
             // Insert sample lessons if table is empty
             InsertSampleLessons(connection);
 
@@ -555,5 +577,134 @@ public class DatabaseManager
         }
 
         return history;
+    }
+
+    // ===== DAILY CHALLENGES METHODS =====
+
+    // Save daily challenge
+    public async Task SaveDailyChallengeAsync(DailyChallenge challenge)
+    {
+        using var connection = new SQLiteConnection(_connectionString);
+        await connection.OpenAsync();
+
+        string query = @"
+            INSERT INTO DailyChallenges (Date, ChallengeType, TargetText, TargetWPM, TargetAccuracy, TimeLimit,
+                                       IsCompleted, CompletedAt, AchievedWPM, AchievedAccuracy, XPEarned)
+            VALUES (@Date, @ChallengeType, @TargetText, @TargetWPM, @TargetAccuracy, @TimeLimit,
+                    @IsCompleted, @CompletedAt, @AchievedWPM, @AchievedAccuracy, @XPEarned)";
+
+        using var command = new SQLiteCommand(query, connection);
+        command.Parameters.AddWithValue("@Date", challenge.Date.ToString("yyyy-MM-dd"));
+        command.Parameters.AddWithValue("@ChallengeType", challenge.ChallengeType.ToString());
+        command.Parameters.AddWithValue("@TargetText", challenge.TargetText);
+        command.Parameters.AddWithValue("@TargetWPM", challenge.TargetWPM);
+        command.Parameters.AddWithValue("@TargetAccuracy", challenge.TargetAccuracy);
+        command.Parameters.AddWithValue("@TimeLimit", challenge.TimeLimit);
+        command.Parameters.AddWithValue("@IsCompleted", challenge.IsCompleted ? 1 : 0);
+        command.Parameters.AddWithValue("@CompletedAt", challenge.CompletedAt?.ToString("yyyy-MM-dd HH:mm:ss") ?? (object)DBNull.Value);
+        command.Parameters.AddWithValue("@AchievedWPM", challenge.AchievedWPM);
+        command.Parameters.AddWithValue("@AchievedAccuracy", challenge.AchievedAccuracy);
+        command.Parameters.AddWithValue("@XPEarned", challenge.XPEarned);
+
+        await command.ExecuteNonQueryAsync();
+    }
+
+    // Get daily challenge by date
+    public async Task<DailyChallenge?> GetDailyChallengeAsync(DateTime date)
+    {
+        using var connection = new SQLiteConnection(_connectionString);
+        await connection.OpenAsync();
+
+        string query = "SELECT * FROM DailyChallenges WHERE Date = @Date LIMIT 1";
+        using var command = new SQLiteCommand(query, connection);
+        command.Parameters.AddWithValue("@Date", date.ToString("yyyy-MM-dd"));
+
+        using var reader = await command.ExecuteReaderAsync();
+        if (await reader.ReadAsync())
+        {
+            return new DailyChallenge
+            {
+                Id = reader.GetInt32(0),
+                Date = DateTime.Parse(reader.GetString(1)),
+                ChallengeType = Enum.Parse<ChallengeType>(reader.GetString(2)),
+                TargetText = reader.GetString(3),
+                TargetWPM = reader.GetInt32(4),
+                TargetAccuracy = reader.GetInt32(5),
+                TimeLimit = reader.GetInt32(6),
+                IsCompleted = reader.GetInt32(7) == 1,
+                CompletedAt = reader.IsDBNull(8) ? null : DateTime.Parse(reader.GetString(8)),
+                AchievedWPM = reader.GetInt32(9),
+                AchievedAccuracy = reader.GetInt32(10),
+                XPEarned = reader.GetInt32(11)
+            };
+        }
+
+        return null;
+    }
+
+    // Update daily challenge
+    public async Task UpdateDailyChallengeAsync(DailyChallenge challenge)
+    {
+        using var connection = new SQLiteConnection(_connectionString);
+        await connection.OpenAsync();
+
+        string query = @"
+            UPDATE DailyChallenges
+            SET IsCompleted = @IsCompleted,
+                CompletedAt = @CompletedAt,
+                AchievedWPM = @AchievedWPM,
+                AchievedAccuracy = @AchievedAccuracy,
+                XPEarned = @XPEarned
+            WHERE Id = @Id";
+
+        using var command = new SQLiteCommand(query, connection);
+        command.Parameters.AddWithValue("@IsCompleted", challenge.IsCompleted ? 1 : 0);
+        command.Parameters.AddWithValue("@CompletedAt", challenge.CompletedAt?.ToString("yyyy-MM-dd HH:mm:ss") ?? (object)DBNull.Value);
+        command.Parameters.AddWithValue("@AchievedWPM", challenge.AchievedWPM);
+        command.Parameters.AddWithValue("@AchievedAccuracy", challenge.AchievedAccuracy);
+        command.Parameters.AddWithValue("@XPEarned", challenge.XPEarned);
+        command.Parameters.AddWithValue("@Id", challenge.Id);
+
+        await command.ExecuteNonQueryAsync();
+    }
+
+    // Get daily challenge history
+    public async Task<List<DailyChallenge>> GetDailyChallengeHistoryAsync(int days)
+    {
+        var challenges = new List<DailyChallenge>();
+
+        using var connection = new SQLiteConnection(_connectionString);
+        await connection.OpenAsync();
+
+        var startDate = DateTime.Today.AddDays(-days);
+        string query = @"
+            SELECT * FROM DailyChallenges
+            WHERE Date >= @StartDate
+            ORDER BY Date DESC";
+
+        using var command = new SQLiteCommand(query, connection);
+        command.Parameters.AddWithValue("@StartDate", startDate.ToString("yyyy-MM-dd"));
+
+        using var reader = await command.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
+        {
+            challenges.Add(new DailyChallenge
+            {
+                Id = reader.GetInt32(0),
+                Date = DateTime.Parse(reader.GetString(1)),
+                ChallengeType = Enum.Parse<ChallengeType>(reader.GetString(2)),
+                TargetText = reader.GetString(3),
+                TargetWPM = reader.GetInt32(4),
+                TargetAccuracy = reader.GetInt32(5),
+                TimeLimit = reader.GetInt32(6),
+                IsCompleted = reader.GetInt32(7) == 1,
+                CompletedAt = reader.IsDBNull(8) ? null : DateTime.Parse(reader.GetString(8)),
+                AchievedWPM = reader.GetInt32(9),
+                AchievedAccuracy = reader.GetInt32(10),
+                XPEarned = reader.GetInt32(11)
+            });
+        }
+
+        return challenges;
     }
 }
