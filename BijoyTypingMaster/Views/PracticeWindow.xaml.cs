@@ -7,10 +7,34 @@ public partial class PracticeWindow : ContentPage
 {
     private readonly TypingEngine _typingEngine;
     private readonly DatabaseManager _dbManager;
+    private readonly SettingsManager? _settingsManager;
     private readonly string _layoutType;
     private Lesson? _currentLesson;
     private bool _isSessionActive = false;
 
+    // Constructor for dependency injection
+    public PracticeWindow(string layoutType, DatabaseManager dbManager, SettingsManager settingsManager)
+    {
+        InitializeComponent();
+        
+        _layoutType = layoutType;
+        _typingEngine = new TypingEngine();
+        _dbManager = dbManager;
+        _settingsManager = settingsManager;
+        
+        LayoutLabel.Text = layoutType;
+        _typingEngine.SetLayout(layoutType);
+        
+        // Load finger guide setting
+        if (_settingsManager != null)
+        {
+            FingerGuide.IsVisible = _settingsManager.CurrentSettings.ShowFingerGuide;
+        }
+        
+        LoadRandomLesson();
+    }
+
+    // Legacy constructor for backward compatibility
     public PracticeWindow(string layoutType)
     {
         InitializeComponent();
@@ -62,6 +86,9 @@ public partial class PracticeWindow : ContentPage
         // Clear display
         UserInputLabel.Text = "";
         UpdateStats();
+        
+        // Initialize finger guide with first character
+        UpdateFingerGuide();
     }
 
     private void OnResetClicked(object sender, EventArgs e)
@@ -76,6 +103,9 @@ public partial class PracticeWindow : ContentPage
         StartButton.IsEnabled = true;
         ResetButton.IsEnabled = false;
         FinishButton.IsEnabled = false;
+        
+        // Clear finger guide
+        FingerGuide.ClearHighlight();
         
         UpdateStats();
     }
@@ -128,9 +158,13 @@ public partial class PracticeWindow : ContentPage
             UpdateStats();
             UpdateTargetTextDisplay();
             
+            // Update finger guide for next character
+            UpdateFingerGuide();
+            
             // Check if session complete
             if (_typingEngine.IsSessionComplete())
             {
+                FingerGuide.ClearHighlight();
                 OnFinishClicked(sender, e);
             }
         }
@@ -141,6 +175,24 @@ public partial class PracticeWindow : ContentPage
             UserInputLabel.Text = _typingEngine.CurrentInput;
             UpdateStats();
             UpdateTargetTextDisplay();
+            UpdateFingerGuide();
+        }
+    }
+
+    private void UpdateFingerGuide()
+    {
+        if (_currentLesson == null || !FingerGuide.IsVisible) return;
+
+        // Get the next expected character
+        int currentPosition = _typingEngine.CurrentInput.Length;
+        if (currentPosition < _currentLesson.TextContent.Length)
+        {
+            string nextChar = _currentLesson.TextContent[currentPosition].ToString();
+            FingerGuide.HighlightKey(nextChar);
+        }
+        else
+        {
+            FingerGuide.ClearHighlight();
         }
     }
 

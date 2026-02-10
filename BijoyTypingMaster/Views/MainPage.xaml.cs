@@ -31,7 +31,7 @@ public partial class MainPage : ContentPage
 
     private async void OnViewProgressClicked(object sender, EventArgs e)
     {
-        await DisplayAlert("Progress", "Progress tracking feature coming soon!", "OK");
+        await Navigation.PushAsync(new StatisticsWindow(_dbManager));
     }
 
     private async void OnSettingsClicked(object sender, EventArgs e)

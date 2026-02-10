@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="BijoyTypingMaster.Views.StatisticsWindow"
+             Title="📊 Statistics">
+    
+    <ScrollView>
+        <VerticalStackLayout Padding="30" Spacing="20">
+            
+            <!-- Header -->
+            <Label Text="📊 Your Progress Statistics" 
+                   FontSize="32" 
+                   FontAttributes="Bold" 
+                   HorizontalOptions="Center"/>
+
+            <!-- Date Filter -->
+            <Picker x:Name="DateRangePicker"
+                    Title="Select Time Range"
+                    HorizontalOptions="Center"
+                    WidthRequest="200"
+                    SelectedIndexChanged="OnDateRangeChanged">
+                <Picker.Items>
+                    <x:String>Last 7 Days</x:String>
+                    <x:String>Last 30 Days</x:String>
+                    <x:String>All Time</x:String>
+                </Picker.Items>
+            </Picker>
+
+            <!-- Summary Cards -->
+            <Grid ColumnDefinitions="*,*,*" ColumnSpacing="15" RowSpacing="15">
+                <!-- Average WPM Card -->
+                <Border Grid.Column="0" 
+                        StrokeThickness="2" 
+                        Stroke="{StaticResource Primary}"
+                        Background="{StaticResource Gray950}"
+                        Padding="15">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="10"/>
+                    </Border.StrokeShape>
+                    <VerticalStackLayout Spacing="5">
+                        <Label Text="📈 Average WPM" 
+                               FontSize="14" 
+                               Opacity="0.7"
+                               HorizontalOptions="Center"/>
+                        <Label x:Name="AvgWpmLabel" 
+                               Text="0.0" 
+                               FontSize="32" 
+                               FontAttributes="Bold"
+                               HorizontalOptions="Center"
+                               TextColor="{StaticResource Primary}"/>
+                    </VerticalStackLayout>
+                </Border>
+                
+                <!-- Average Accuracy Card -->
+                <Border Grid.Column="1" 
+                        StrokeThickness="2" 
+                        Stroke="{StaticResource Secondary}"
+                        Background="{StaticResource Gray950}"
+                        Padding="15">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="10"/>
+                    </Border.StrokeShape>
+                    <VerticalStackLayout Spacing="5">
+                        <Label Text="✅ Avg Accuracy" 
+                               FontSize="14" 
+                               Opacity="0.7"
+                               HorizontalOptions="Center"/>
+                        <Label x:Name="AvgAccLabel" 
+                               Text="0.0%" 
+                               FontSize="32" 
+                               FontAttributes="Bold"
+                               HorizontalOptions="Center"
+                               TextColor="{StaticResource Secondary}"/>
+                    </VerticalStackLayout>
+                </Border>
+                
+                <!-- Best WPM Card -->
+                <Border Grid.Column="2" 
+                        StrokeThickness="2" 
+                        Stroke="{StaticResource Tertiary}"
+                        Background="{StaticResource Gray950}"
+                        Padding="15">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="10"/>
+                    </Border.StrokeShape>
+                    <VerticalStackLayout Spacing="5">
+                        <Label Text="🏆 Best WPM" 
+                               FontSize="14" 
+                               Opacity="0.7"
+                               HorizontalOptions="Center"/>
+                        <Label x:Name="BestWpmLabel" 
+                               Text="0.0" 
+                               FontSize="32" 
+                               FontAttributes="Bold"
+                               HorizontalOptions="Center"
+                               TextColor="{StaticResource Tertiary}"/>
+                    </VerticalStackLayout>
+                </Border>
+            </Grid>
+
+            <!-- Progress Over Time Section -->
+            <Border StrokeThickness="2" 
+                    Stroke="{StaticResource Primary}"
+                    Background="{StaticResource Gray950}"
+                    Padding="20">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10"/>
+                </Border.StrokeShape>
+                
+                <VerticalStackLayout Spacing="15">
+                    <Label Text="📈 Progress Over Time" 
+                           FontSize="20" 
+                           FontAttributes="Bold"/>
+                    
+                    <!-- WPM Trend -->
+                    <VerticalStackLayout Spacing="5">
+                        <Label Text="WPM Trend:" FontSize="14" FontAttributes="Bold"/>
+                        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
+                            <Label Grid.Column="0" 
+                                   Text="Low" 
+                                   FontSize="10" 
+                                   VerticalOptions="Center"/>
+                            <ProgressBar Grid.Column="1" 
+                                        x:Name="WpmProgressBar"
+                                        Progress="0.0" 
+                                        ProgressColor="{StaticResource Primary}"
+                                        HeightRequest="10"/>
+                            <Label Grid.Column="2" 
+                                   Text="High" 
+                                   FontSize="10" 
+                                   VerticalOptions="Center"/>
+                        </Grid>
+                        <Label x:Name="WpmTrendLabel" 
+                               Text="No data yet" 
+                               FontSize="12" 
+                               Opacity="0.7"
+                               HorizontalOptions="Center"/>
+                    </VerticalStackLayout>
+
+                    <!-- Accuracy Trend -->
+                    <VerticalStackLayout Spacing="5" Margin="0,10,0,0">
+                        <Label Text="Accuracy Trend:" FontSize="14" FontAttributes="Bold"/>
+                        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
+                            <Label Grid.Column="0" 
+                                   Text="70%" 
+                                   FontSize="10" 
+                                   VerticalOptions="Center"/>
+                            <ProgressBar Grid.Column="1" 
+                                        x:Name="AccuracyProgressBar"
+                                        Progress="0.0" 
+                                        ProgressColor="{StaticResource Secondary}"
+                                        HeightRequest="10"/>
+                            <Label Grid.Column="2" 
+                                   Text="100%" 
+                                   FontSize="10" 
+                                   VerticalOptions="Center"/>
+                        </Grid>
+                        <Label x:Name="AccuracyTrendLabel" 
+                               Text="No data yet" 
+                               FontSize="12" 
+                               Opacity="0.7"
+                               HorizontalOptions="Center"/>
+                    </VerticalStackLayout>
+
+                    <!-- Session Count -->
+                    <VerticalStackLayout Spacing="5" Margin="0,10,0,0">
+                        <Label Text="Practice Sessions:" FontSize="14" FontAttributes="Bold"/>
+                        <Label x:Name="SessionCountLabel" 
+                               Text="0 sessions" 
+                               FontSize="18" 
+                               HorizontalOptions="Center"
+                               TextColor="{StaticResource Primary}"/>
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Speed Test History -->
+            <Border StrokeThickness="2" 
+                    Stroke="{StaticResource Secondary}"
+                    Background="{StaticResource Gray950}"
+                    Padding="20">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10"/>
+                </Border.StrokeShape>
+                
+                <VerticalStackLayout Spacing="15">
+                    <Label Text="⚡ Recent Speed Tests" 
+                           FontSize="20" 
+                           FontAttributes="Bold"/>
+                    
+                    <!-- Speed Test List Header -->
+                    <Grid ColumnDefinitions="*,*,*,*" 
+                          Padding="10"
+                          Background="{StaticResource Gray900}">
+                        <Label Grid.Column="0" 
+                               Text="Date" 
+                               FontSize="12" 
+                               FontAttributes="Bold"
+                               HorizontalOptions="Center"/>
+                        <Label Grid.Column="1" 
+                               Text="WPM" 
+                               FontSize="12" 
+                               FontAttributes="Bold"
+                               HorizontalOptions="Center"/>
+                        <Label Grid.Column="2" 
+                               Text="Accuracy" 
+                               FontSize="12" 
+                               FontAttributes="Bold"
+                               HorizontalOptions="Center"/>
+                        <Label Grid.Column="3" 
+                               Text="Rating" 
+                               FontSize="12" 
+                               FontAttributes="Bold"
+                               HorizontalOptions="Center"/>
+                    </Grid>
+
+                    <!-- Speed Test Collection -->
+                    <CollectionView x:Name="SpeedTestsCollection"
+                                    HeightRequest="300">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Border Padding="5" Margin="0,2">
+                                    <Grid ColumnDefinitions="*,*,*,*" Padding="10">
+                                        <Label Grid.Column="0" 
+                                               Text="{Binding Date, StringFormat='{0:MM/dd/yy}'}" 
+                                               FontSize="12"
+                                               HorizontalOptions="Center"/>
+                                        <Label Grid.Column="1" 
+                                               Text="{Binding WPM, StringFormat='{0:F1}'}" 
+                                               FontSize="12"
+                                               FontAttributes="Bold"
+                                               TextColor="{StaticResource Primary}"
+                                               HorizontalOptions="Center"/>
+                                        <Label Grid.Column="2" 
+                                               Text="{Binding Accuracy, StringFormat='{0:F1}%'}" 
+                                               FontSize="12"
+                                               FontAttributes="Bold"
+                                               TextColor="{StaticResource Secondary}"
+                                               HorizontalOptions="Center"/>
+                                        <Label Grid.Column="3" 
+                                               Text="{Binding Rating}" 
+                                               FontSize="11"
+                                               HorizontalOptions="Center"/>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                        <CollectionView.EmptyView>
+                            <Label Text="No speed tests yet. Take your first test!" 
+                                   FontSize="14" 
+                                   Opacity="0.7"
+                                   HorizontalOptions="Center"
+                                   Margin="0,20"/>
+                        </CollectionView.EmptyView>
+                    </CollectionView>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Practice Session History -->
+            <Border StrokeThickness="2" 
+                    Stroke="{StaticResource Tertiary}"
+                    Background="{StaticResource Gray950}"
+                    Padding="20">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10"/>
+                </Border.StrokeShape>
+                
+                <VerticalStackLayout Spacing="15">
+                    <Label Text="📝 Recent Practice Sessions" 
+                           FontSize="20" 
+                           FontAttributes="Bold"/>
+                    
+                    <!-- Practice List Header -->
+                    <Grid ColumnDefinitions="*,*,*,*" 
+                          Padding="10"
+                          Background="{StaticResource Gray900}">
+                        <Label Grid.Column="0" 
+                               Text="Date" 
+                               FontSize="12" 
+                               FontAttributes="Bold"
+                               HorizontalOptions="Center"/>
+                        <Label Grid.Column="1" 
+                               Text="WPM" 
+                               FontSize="12" 
+                               FontAttributes="Bold"
+                               HorizontalOptions="Center"/>
+                        <Label Grid.Column="2" 
+                               Text="Accuracy" 
+                               FontSize="12" 
+                               FontAttributes="Bold"
+                               HorizontalOptions="Center"/>
+                        <Label Grid.Column="3" 
+                               Text="Lesson" 
+                               FontSize="12" 
+                               FontAttributes="Bold"
+                               HorizontalOptions="Center"/>
+                    </Grid>
+
+                    <!-- Practice Collection -->
+                    <CollectionView x:Name="PracticeSessionsCollection"
+                                    HeightRequest="300">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Border Padding="5" Margin="0,2">
+                                    <Grid ColumnDefinitions="*,*,*,*" Padding="10">
+                                        <Label Grid.Column="0" 
+                                               Text="{Binding Date, StringFormat='{0:MM/dd/yy}'}" 
+                                               FontSize="12"
+                                               HorizontalOptions="Center"/>
+                                        <Label Grid.Column="1" 
+                                               Text="{Binding WPM, StringFormat='{0:F1}'}" 
+                                               FontSize="12"
+                                               FontAttributes="Bold"
+                                               TextColor="{StaticResource Primary}"
+                                               HorizontalOptions="Center"/>
+                                        <Label Grid.Column="2" 
+                                               Text="{Binding Accuracy, StringFormat='{0:F1}%'}" 
+                                               FontSize="12"
+                                               FontAttributes="Bold"
+                                               TextColor="{StaticResource Secondary}"
+                                               HorizontalOptions="Center"/>
+                                        <Label Grid.Column="3" 
+                                               Text="{Binding LessonId, StringFormat='#{0}'}" 
+                                               FontSize="11"
+                                               HorizontalOptions="Center"/>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                        <CollectionView.EmptyView>
+                            <Label Text="No practice sessions yet. Start practicing!" 
+                                   FontSize="14" 
+                                   Opacity="0.7"
+                                   HorizontalOptions="Center"
+                                   Margin="0,20"/>
+                        </CollectionView.EmptyView>
+                    </CollectionView>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Back Button -->
+            <Button Text="🏠 Back to Home" 
+                    Clicked="OnBackClicked"
+                    WidthRequest="200"
+                    HeightRequest="50"
+                    HorizontalOptions="Center"
+                    Margin="0,20,0,0"/>
+
+        </VerticalStackLayout>
+    </ScrollView>
+    
+</ContentPage>

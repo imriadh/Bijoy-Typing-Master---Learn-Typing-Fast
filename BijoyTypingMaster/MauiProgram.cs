@@ -33,6 +33,7 @@ public static class MauiProgram
         builder.Services.AddTransient<PaymentWindow>();
         builder.Services.AddTransient<SettingsWindow>();
         builder.Services.AddTransient<SpeedTestWindow>();
+        builder.Services.AddTransient<StatisticsWindow>();
 
 #if DEBUG
         builder.Logging.AddDebug();
