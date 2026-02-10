@@ -25,6 +25,9 @@ public static class MauiProgram
         builder.Services.AddSingleton<LessonManager>();
         builder.Services.AddSingleton<CertificateGenerator>();
         builder.Services.AddSingleton<XPManager>();
+        builder.Services.AddSingleton<DailyChallengeManager>();
+        builder.Services.AddSingleton<AchievementManager>();
+        builder.Services.AddSingleton<CustomTextManager>();
         builder.Services.AddTransient<TypingEngine>();
         builder.Services.AddTransient<SpeedTestEngine>();
 
@@ -35,6 +38,10 @@ public static class MauiProgram
         builder.Services.AddTransient<SettingsWindow>();
         builder.Services.AddTransient<SpeedTestWindow>();
         builder.Services.AddTransient<StatisticsWindow>();
+        builder.Services.AddTransient<DailyChallengeWindow>();
+        builder.Services.AddTransient<ChallengePracticeWindow>();
+        builder.Services.AddTransient<AchievementsWindow>();
+        builder.Services.AddTransient<CustomPracticeWindow>();
 
 #if DEBUG
         builder.Logging.AddDebug();

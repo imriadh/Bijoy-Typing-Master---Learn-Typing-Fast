@@ -8,18 +8,27 @@ public partial class MainPage : ContentPage
     private readonly SettingsManager _settingsManager;
     private readonly CertificateGenerator _certGenerator;
     private readonly XPManager _xpManager;
+    private readonly DailyChallengeManager _challengeManager;
+    private readonly AchievementManager _achievementManager;
+    private readonly CustomTextManager _customTextManager;
 
     public MainPage(
         DatabaseManager dbManager,
         SettingsManager settingsManager,
         CertificateGenerator certGenerator,
-        XPManager xpManager)
+        XPManager xpManager,
+        DailyChallengeManager challengeManager,
+        AchievementManager achievementManager,
+        CustomTextManager customTextManager)
     {
         InitializeComponent();
         _dbManager = dbManager;
         _settingsManager = settingsManager;
         _certGenerator = certGenerator;
         _xpManager = xpManager;
+        _challengeManager = challengeManager;
+        _achievementManager = achievementManager;
+        _customTextManager = customTextManager;
 
         // Load XP profile on page load
         LoadXPProfile();
@@ -79,5 +88,26 @@ public partial class MainPage : ContentPage
     private async void OnSettingsPageClicked(object sender, EventArgs e)
     {
         await Navigation.PushAsync(new SettingsWindow(_settingsManager));
+    }
+
+    private async void OnDailyChallengeClicked(object sender, EventArgs e)
+    {
+        await Navigation.PushAsync(
+            new DailyChallengeWindow(_challengeManager, _xpManager)
+        );
+    }
+
+    private async void OnAchievementsClicked(object sender, EventArgs e)
+    {
+        await Navigation.PushAsync(
+            new AchievementsWindow(_achievementManager, _xpManager)
+        );
+    }
+
+    private async void OnCustomPracticeClicked(object sender, EventArgs e)
+    {
+        await Navigation.PushAsync(
+            new CustomPracticeWindow(_customTextManager, _xpManager)
+        );
     }
 }

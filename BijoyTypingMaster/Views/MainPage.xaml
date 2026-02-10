@@ -60,6 +60,26 @@
                 BackgroundColor="{StaticResource Secondary}" />
 
             <Button
+                x:Name="DailyChallengeBtn"
+                Text="📅 Daily Challenge"
+                Clicked="OnDailyChallengeClicked"
+                HorizontalOptions="Center"
+                BackgroundColor="#8b5cf6" />
+
+            <Button
+                x:Name="AchievementsBtn"
+                Text="🏆 Achievements"
+                Clicked="OnAchievementsClicked"
+                HorizontalOptions="Center"
+                BackgroundColor="#f59e0b" />
+
+            <Button
+                x:Name="CustomPracticeBtn"
+                Text="📝 Custom Practice"
+                Clicked="OnCustomPracticeClicked"
+                HorizontalOptions="Center" />
+
+            <Button
                 x:Name="SettingsPageBtn"
                 Text="⚙️ Settings"
                 Clicked="OnSettingsPageClicked"

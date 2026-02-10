@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="BijoyTypingMaster.Views.ChallengePracticeWindow"
+             Title="Challenge in Progress 🎯">
+
+    <Grid RowDefinitions="Auto,Auto,*,Auto" Padding="20" RowSpacing="15">
+
+        <!-- Timer and Stats Header -->
+        <Border Grid.Row="0"
+                BackgroundColor="#1e293b"
+                Stroke="#334155"
+                StrokeThickness="2"
+                Padding="20"
+                StrokeShape="RoundRectangle 12">
+            <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="10">
+                <!-- Timer -->
+                <VerticalStackLayout Grid.Column="0" Spacing="5">
+                    <Label Text="⏱️ TIME"
+                           FontSize="12"
+                           TextColor="#94a3b8"
+                           HorizontalOptions="Center"/>
+                    <Label x:Name="TimerLabel"
+                           Text="60"
+                           FontSize="32"
+                           FontAttributes="Bold"
+                           TextColor="#fbbf24"
+                           HorizontalOptions="Center"/>
+                </VerticalStackLayout>
+
+                <!-- WPM -->
+                <VerticalStackLayout Grid.Column="1" Spacing="5">
+                    <Label Text="🚀 WPM"
+                           FontSize="12"
+                           TextColor="#94a3b8"
+                           HorizontalOptions="Center"/>
+                    <Label x:Name="WPMLabel"
+                           Text="0"
+                           FontSize="32"
+                           FontAttributes="Bold"
+                           TextColor="#10b981"
+                           HorizontalOptions="Center"/>
+                </VerticalStackLayout>
+
+                <!-- Accuracy -->
+                <VerticalStackLayout Grid.Column="2" Spacing="5">
+                    <Label Text="✓ ACC"
+                           FontSize="12"
+                           TextColor="#94a3b8"
+                           HorizontalOptions="Center"/>
+                    <Label x:Name="AccuracyLabel"
+                           Text="100%"
+                           FontSize="32"
+                           FontAttributes="Bold"
+                           TextColor="#6366f1"
+                           HorizontalOptions="Center"/>
+                </VerticalStackLayout>
+
+                <!-- Progress -->
+                <VerticalStackLayout Grid.Column="3" Spacing="5">
+                    <Label Text="📊 PROGRESS"
+                           FontSize="12"
+                           TextColor="#94a3b8"
+                           HorizontalOptions="Center"/>
+                    <Label x:Name="ProgressLabel"
+                           Text="0%"
+                           FontSize="32"
+                           FontAttributes="Bold"
+                           TextColor="#8b5cf6"
+                           HorizontalOptions="Center"/>
+                </VerticalStackLayout>
+            </Grid>
+        </Border>
+
+        <!-- Target Display -->
+        <Border Grid.Row="1"
+                BackgroundColor="#fef3c7"
+                Padding="15"
+                StrokeThickness="0"
+                StrokeShape="RoundRectangle 8">
+            <HorizontalStackLayout Spacing="15" HorizontalOptions="Center">
+                <Label Text="🎯 TARGET:"
+                       FontSize="16"
+                       FontAttributes="Bold"
+                       TextColor="#92400e"
+                       VerticalOptions="Center"/>
+                <Label x:Name="TargetDisplayLabel"
+                       Text="40 WPM | 90% Accuracy"
+                       FontSize="16"
+                       FontAttributes="Bold"
+                       TextColor="#92400e"
+                       VerticalOptions="Center"/>
+            </HorizontalStackLayout>
+        </Border>
+
+        <!-- Text Display Area -->
+        <Border Grid.Row="2"
+                BackgroundColor="#1e293b"
+                Stroke="#334155"
+                StrokeThickness="2"
+                Padding="30"
+                StrokeShape="RoundRectangle 12">
+            <VerticalStackLayout Spacing="20" VerticalOptions="Center">
+                <Label x:Name="TargetTextLabel"
+                       Text="আমি বাংলায় গান গাই। আমার এই দেশের মাটি যেমন সহজ সরল তেমনি তার ভাষা।"
+                       FontSize="24"
+                       TextColor="White"
+                       HorizontalOptions="Center"
+                       HorizontalTextAlignment="Center"
+                       LineBreakMode="WordWrap"/>
+
+                <Entry x:Name="UserInputEntry"
+                       Placeholder="Start typing here..."
+                       FontSize="20"
+                       TextColor="White"
+                       PlaceholderColor="#94a3b8"
+                       BackgroundColor="#0f172a"
+                       HeightRequest="60"
+                       HorizontalOptions="Fill"
+                       TextChanged="OnTextChanged"
+                       IsEnabled="False"/>
+
+                <Label x:Name="FeedbackLabel"
+                       Text=""
+                       FontSize="16"
+                       FontAttributes="Bold"
+                       HorizontalOptions="Center"
+                       IsVisible="False"/>
+            </VerticalStackLayout>
+        </Border>
+
+        <!-- Control Buttons -->
+        <Border Grid.Row="3"
+                BackgroundColor="#1e293b"
+                Padding="15"
+                StrokeThickness="0"
+                StrokeShape="RoundRectangle 8">
+            <HorizontalStackLayout Spacing="15" HorizontalOptions="Center">
+                <Button x:Name="StartButton"
+                        Text="▶️ START"
+                        FontSize="18"
+                        FontAttributes="Bold"
+                        BackgroundColor="#10b981"
+                        TextColor="White"
+                        WidthRequest="150"
+                        HeightRequest="50"
+                        CornerRadius="10"
+                        Clicked="OnStartClicked"/>
+
+                <Button x:Name="ResetButton"
+                        Text="🔄 RESET"
+                        FontSize="18"
+                        FontAttributes="Bold"
+                        BackgroundColor="#6b7280"
+                        TextColor="White"
+                        WidthRequest="150"
+                        HeightRequest="50"
+                        CornerRadius="10"
+                        Clicked="OnResetClicked"
+                        IsEnabled="False"/>
+            </HorizontalStackLayout>
+        </Border>
+
+    </Grid>
+
+</ContentPage>
