@@ -61,6 +61,26 @@ public class DatabaseManager
                 command.ExecuteNonQuery();
             }
 
+            // Create SpeedTestResults table
+            string createSpeedTestTable = @"
+                CREATE TABLE IF NOT EXISTS SpeedTestResults (
+                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    Date TEXT NOT NULL,
+                    Duration INTEGER NOT NULL,
+                    WPM REAL NOT NULL,
+                    NetWPM REAL NOT NULL,
+                    Accuracy REAL NOT NULL,
+                    TotalCharacters INTEGER NOT NULL,
+                    CorrectCharacters INTEGER NOT NULL,
+                    ErrorCount INTEGER NOT NULL,
+                    TestText TEXT NOT NULL
+                );";
+
+            using (var command = new SQLiteCommand(createSpeedTestTable, connection))
+            {
+                command.ExecuteNonQuery();
+            }
+
             // Insert sample lessons if table is empty
             InsertSampleLessons(connection);
 
@@ -205,5 +225,151 @@ public class DatabaseManager
         }
 
         return progressList;
+    }
+
+    // Save speed test result
+    public void SaveSpeedTestResult(SpeedTestResult result)
+    {
+        using var connection = new SQLiteConnection(_connectionString);
+        connection.Open();
+
+        string query = @"
+            INSERT INTO SpeedTestResults (Date, Duration, WPM, NetWPM, Accuracy, 
+                                         TotalCharacters, CorrectCharacters, ErrorCount, TestText)
+            VALUES (@Date, @Duration, @WPM, @NetWPM, @Accuracy, 
+                    @TotalCharacters, @CorrectCharacters, @ErrorCount, @TestText)";
+
+        using var command = new SQLiteCommand(query, connection);
+        command.Parameters.AddWithValue("@Date", result.Date.ToString("yyyy-MM-dd HH:mm:ss"));
+        command.Parameters.AddWithValue("@Duration", result.Duration);
+        command.Parameters.AddWithValue("@WPM", result.WPM);
+        command.Parameters.AddWithValue("@NetWPM", result.NetWPM);
+        command.Parameters.AddWithValue("@Accuracy", result.Accuracy);
+        command.Parameters.AddWithValue("@TotalCharacters", result.TotalCharacters);
+        command.Parameters.AddWithValue("@CorrectCharacters", result.CorrectCharacters);
+        command.Parameters.AddWithValue("@ErrorCount", result.ErrorCount);
+        command.Parameters.AddWithValue("@TestText", result.TestText);
+
+        command.ExecuteNonQuery();
+    }
+
+    // Get speed test history
+    public List<SpeedTestResult> GetSpeedTestHistory(int limit = 50)
+    {
+        var results = new List<SpeedTestResult>();
+
+        using var connection = new SQLiteConnection(_connectionString);
+        connection.Open();
+
+        string query = "SELECT * FROM SpeedTestResults ORDER BY Date DESC LIMIT @Limit";
+        using var command = new SQLiteCommand(query, connection);
+        command.Parameters.AddWithValue("@Limit", limit);
+
+        using var reader = command.ExecuteReader();
+        while (reader.Read())
+        {
+            results.Add(new SpeedTestResult
+            {
+                Id = reader.GetInt32(0),
+                Date = DateTime.Parse(reader.GetString(1)),
+                Duration = reader.GetInt32(2),
+                WPM = reader.GetDouble(3),
+                NetWPM = reader.GetDouble(4),
+                Accuracy = reader.GetDouble(5),
+                TotalCharacters = reader.GetInt32(6),
+                CorrectCharacters = reader.GetInt32(7),
+                ErrorCount = reader.GetInt32(8),
+                TestText = reader.GetString(9)
+            });
+        }
+
+        return results;
+    }
+
+    // Get best speed test result
+    public SpeedTestResult? GetBestSpeedTestResult()
+    {
+        using var connection = new SQLiteConnection(_connectionString);
+        connection.Open();
+
+        string query = "SELECT * FROM SpeedTestResults ORDER BY WPM DESC, Accuracy DESC LIMIT 1";
+        using var command = new SQLiteCommand(query, connection);
+
+        using var reader = command.ExecuteReader();
+        if (reader.Read())
+        {
+            return new SpeedTestResult
+            {
+                Id = reader.GetInt32(0),
+                Date = DateTime.Parse(reader.GetString(1)),
+                Duration = reader.GetInt32(2),
+                WPM = reader.GetDouble(3),
+                NetWPM = reader.GetDouble(4),
+                Accuracy = reader.GetDouble(5),
+                TotalCharacters = reader.GetInt32(6),
+                CorrectCharacters = reader.GetInt32(7),
+                ErrorCount = reader.GetInt32(8),
+                TestText = reader.GetString(9)
+            };
+        }
+
+        return null;
+    }
+
+    // Get average WPM and accuracy
+    public (double avgWPM, double avgAccuracy) GetAverageStats(int days = 7)
+    {
+        using var connection = new SQLiteConnection(_connectionString);
+        connection.Open();
+
+        var cutoffDate = DateTime.Now.AddDays(-days).ToString("yyyy-MM-dd");
+        
+        string query = @"
+            SELECT AVG(WPM), AVG(Accuracy) 
+            FROM UserProgress 
+            WHERE Date >= @CutoffDate";
+
+        using var command = new SQLiteCommand(query, connection);
+        command.Parameters.AddWithValue("@CutoffDate", cutoffDate);
+
+        using var reader = command.ExecuteReader();
+        if (reader.Read() && !reader.IsDBNull(0))
+        {
+            return (reader.GetDouble(0), reader.GetDouble(1));
+        }
+
+        return (0, 0);
+    }
+
+    // Get progress over time for charts
+    public List<(DateTime date, double wpm, double accuracy)> GetProgressOverTime(int days = 30)
+    {
+        var results = new List<(DateTime, double, double)>();
+
+        using var connection = new SQLiteConnection(_connectionString);
+        connection.Open();
+
+        var cutoffDate = DateTime.Now.AddDays(-days).ToString("yyyy-MM-dd");
+
+        string query = @"
+            SELECT Date, AVG(WPM), AVG(Accuracy) 
+            FROM UserProgress 
+            WHERE Date >= @CutoffDate
+            GROUP BY DATE(Date)
+            ORDER BY Date ASC";
+
+        using var command = new SQLiteCommand(query, connection);
+        command.Parameters.AddWithValue("@CutoffDate", cutoffDate);
+
+        using var reader = command.ExecuteReader();
+        while (reader.Read())
+        {
+            var date = DateTime.Parse(reader.GetString(0));
+            var wpm = reader.GetDouble(1);
+            var accuracy = reader.GetDouble(2);
+            results.Add((date, wpm, accuracy));
+        }
+
+        return results;
     }
 }
