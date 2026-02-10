@@ -8,12 +8,20 @@ public partial class PracticeWindow : ContentPage
     private readonly TypingEngine _typingEngine;
     private readonly DatabaseManager _dbManager;
     private readonly SettingsManager? _settingsManager;
+    private readonly XPManager _xpManager;
+    private readonly AchievementManager _achievementManager;
     private readonly string _layoutType;
     private Lesson? _currentLesson;
     private bool _isSessionActive = false;
+    private DateTime _sessionStartTime;
 
     // Constructor for dependency injection
-    public PracticeWindow(string layoutType, DatabaseManager dbManager, SettingsManager settingsManager)
+    public PracticeWindow(
+        string layoutType, 
+        DatabaseManager dbManager, 
+        SettingsManager settingsManager,
+        XPManager xpManager,
+        AchievementManager achievementManager)
     {
         InitializeComponent();
         
@@ -21,6 +29,8 @@ public partial class PracticeWindow : ContentPage
         _typingEngine = new TypingEngine();
         _dbManager = dbManager;
         _settingsManager = settingsManager;
+        _xpManager = xpManager;
+        _achievementManager = achievementManager;
         
         LayoutLabel.Text = layoutType;
         _typingEngine.SetLayout(layoutType);
@@ -73,6 +83,7 @@ public partial class PracticeWindow : ContentPage
         if (_currentLesson == null) return;
 
         _isSessionActive = true;
+        _sessionStartTime = DateTime.Now;
         _typingEngine.StartSession(_currentLesson.TextContent);
         
         // Enable/disable buttons
@@ -117,6 +128,9 @@ public partial class PracticeWindow : ContentPage
         var (wpm, accuracy) = _typingEngine.EndSession();
         _isSessionActive = false;
 
+        // Calculate practice time
+        var practiceTime = (DateTime.Now - _sessionStartTime).TotalMinutes;
+
         // Save to database
         if (_currentLesson != null)
         {
@@ -129,12 +143,45 @@ public partial class PracticeWindow : ContentPage
             };
 
             _dbManager.SaveProgress(progress);
-        }
 
-        // Show results
-        await DisplayAlert("Session Complete!", 
-            $"WPM: {wpm:F2}\nAccuracy: {accuracy:F2}%\n\nGreat job!", 
-            "OK");
+            // Award XP for lesson completion
+            var (newLevel, leveledUp) = await _xpManager.AwardLessonXPAsync(_currentLesson.LessonNumber);
+            
+            // Update user profile stats
+            var profile = await _xpManager.GetOrCreateUserProfileAsync();
+            profile.TotalLessonsCompleted++;
+            profile.TotalPracticeTimeMinutes += (int)Math.Ceiling(practiceTime);
+            await _dbManager.UpdateUserProfileAsync(profile);
+
+            // Check for achievement unlocks
+            var unlockedAchievements = await _achievementManager.CheckAndUnlockAchievementsAsync();
+
+            // Build results message
+            var resultsMessage = $"WPM: {wpm:F2}\nAccuracy: {accuracy:F2}%\n\n";
+            resultsMessage += $"✨ +25 XP Earned!\n";
+            
+            if (leveledUp)
+            {
+                var reward = _xpManager.GetLevelUpReward(newLevel);
+                resultsMessage += $"\n🎉 LEVEL UP! You are now Level {newLevel}!\n";
+                if (reward > 0)
+                    resultsMessage += $"Bonus: +{reward} XP\n";
+            }
+
+            if (unlockedAchievements.Any())
+            {
+                resultsMessage += $"\n🏆 Achievement Unlocked!\n";
+                foreach (var achievement in unlockedAchievements)
+                {
+                    resultsMessage += $"{achievement.Icon} {achievement.Name} (+{achievement.XPReward} XP)\n";
+                }
+            }
+
+            resultsMessage += "\nGreat job!";
+
+            // Show results
+            await DisplayAlert("Session Complete!", resultsMessage, "OK");
+        }
 
         // Reset for next session
         OnResetClicked(sender, e);

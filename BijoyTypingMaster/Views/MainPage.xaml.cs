@@ -60,12 +60,16 @@ public partial class MainPage : ContentPage
 
     private async void OnBijoyPracticeClicked(object sender, EventArgs e)
     {
-        await Navigation.PushAsync(new PracticeWindow("Bijoy"));
+        await Navigation.PushAsync(
+            new PracticeWindow("Bijoy", _dbManager, _settingsManager, _xpManager, _achievementManager)
+        );
     }
 
     private async void OnUnicodePracticeClicked(object sender, EventArgs e)
     {
-        await Navigation.PushAsync(new PracticeWindow("Unicode"));
+        await Navigation.PushAsync(
+            new PracticeWindow("Unicode", _dbManager, _settingsManager, _xpManager, _achievementManager)
+        );
     }
 
     private async void OnViewProgressClicked(object sender, EventArgs e)
@@ -81,7 +85,7 @@ public partial class MainPage : ContentPage
     private async void OnSpeedTestClicked(object sender, EventArgs e)
     {
         await Navigation.PushAsync(
-            new SpeedTestWindow(_dbManager, _settingsManager, _certGenerator)
+            new SpeedTestWindow(_dbManager, _settingsManager, _certGenerator, _xpManager, _achievementManager)
         );
     }
 

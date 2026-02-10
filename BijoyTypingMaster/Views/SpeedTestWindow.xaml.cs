@@ -9,6 +9,8 @@ public partial class SpeedTestWindow : ContentPage
     private readonly DatabaseManager _dbManager;
     private readonly SettingsManager _settingsManager;
     private readonly CertificateGenerator _certGenerator;
+    private readonly XPManager _xpManager;
+    private readonly AchievementManager _achievementManager;
     private SpeedTestEngine? _engine;
     private System.Timers.Timer? _timer;
     private SpeedTestResult? _lastResult;
@@ -16,12 +18,16 @@ public partial class SpeedTestWindow : ContentPage
     public SpeedTestWindow(
         DatabaseManager dbManager, 
         SettingsManager settingsManager,
-        CertificateGenerator certGenerator)
+        CertificateGenerator certGenerator,
+        XPManager xpManager,
+        AchievementManager achievementManager)
     {
         InitializeComponent();
         _dbManager = dbManager;
         _settingsManager = settingsManager;
         _certGenerator = certGenerator;
+        _xpManager = xpManager;
+        _achievementManager = achievementManager;
     }
 
     private async void OnStartClicked(object sender, EventArgs e)
@@ -159,8 +165,45 @@ public partial class SpeedTestWindow : ContentPage
             // Save to database
             _dbManager.SaveSpeedTestResult(_lastResult);
 
+            // Award XP for speed test completion
+            var (newLevel, leveledUp) = await _xpManager.AwardSpeedTestXPAsync(_lastResult.WPM, _lastResult.Accuracy);
+            
+            // Update user profile stats
+            var profile = await _xpManager.GetOrCreateUserProfileAsync();
+            profile.TotalTestsCompleted++;
+            profile.TotalPracticeTimeMinutes += (int)Math.Ceiling(_lastResult.Duration / 60.0);
+            await _dbManager.UpdateUserProfileAsync(profile);
+
+            // Check for achievement unlocks
+            var unlockedAchievements = await _achievementManager.CheckAndUnlockAchievementsAsync();
+
             // Show results
             ShowResults(_lastResult);
+
+            // Show level-up/achievement notifications if applicable
+            if (leveledUp || unlockedAchievements.Any())
+            {
+                var message = "";
+                
+                if (leveledUp)
+                {
+                    var reward = _xpManager.GetLevelUpReward(newLevel);
+                    message += $"🎉 LEVEL UP! You are now Level {newLevel}!\n";
+                    if (reward > 0)
+                        message += $"Bonus: +{reward} XP\n";
+                }
+
+                if (unlockedAchievements.Any())
+                {
+                    message += "\n🏆 Achievement Unlocked!\n";
+                    foreach (var achievement in unlockedAchievements)
+                    {
+                        message += $"{achievement.Icon} {achievement.Name} (+{achievement.XPReward} XP)\n";
+                    }
+                }
+
+                await DisplayAlert("Congratulations!", message, "OK");
+            }
 
             // Update UI state
             StartButton.IsEnabled = true;
