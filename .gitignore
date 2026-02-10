@@ -1,0 +1,51 @@
+# Ignore credentials and tokens
+automation/credentials.json
+automation/token.pickle
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+automation/.env
+
+# .NET
+BijoyTypingMaster/bin/
+BijoyTypingMaster/obj/
+*.user
+*.suo
+*.cache
+*.log
+
+# MAUI
+BijoyTypingMaster/.vs/
+BijoyTypingMaster/.vscode/
+*.db
+*.db-shm
+*.db-wal
+
+# User-specific files
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+
+# Font files (add your font separately)
+# BijoyTypingMaster/Resources/Fonts/SutonnyMJ.ttf
+
+# License data
+license.dat
+typing_master.db

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="BijoyTypingMaster.Controls.VirtualKeyboard">
+    
+    <VerticalStackLayout Spacing="5" Padding="10">
+        
+        <!-- Row 1: Numbers -->
+        <HorizontalStackLayout Spacing="5" HorizontalOptions="Center">
+            <Button Text="`" WidthRequest="40" HeightRequest="40" x:Name="KeyTilde"/>
+            <Button Text="1" WidthRequest="40" HeightRequest="40" x:Name="Key1"/>
+            <Button Text="2" WidthRequest="40" HeightRequest="40" x:Name="Key2"/>
+            <Button Text="3" WidthRequest="40" HeightRequest="40" x:Name="Key3"/>
+            <Button Text="4" WidthRequest="40" HeightRequest="40" x:Name="Key4"/>
+            <Button Text="5" WidthRequest="40" HeightRequest="40" x:Name="Key5"/>
+            <Button Text="6" WidthRequest="40" HeightRequest="40" x:Name="Key6"/>
+            <Button Text="7" WidthRequest="40" HeightRequest="40" x:Name="Key7"/>
+            <Button Text="8" WidthRequest="40" HeightRequest="40" x:Name="Key8"/>
+            <Button Text="9" WidthRequest="40" HeightRequest="40" x:Name="Key9"/>
+            <Button Text="0" WidthRequest="40" HeightRequest="40" x:Name="Key0"/>
+            <Button Text="-" WidthRequest="40" HeightRequest="40" x:Name="KeyMinus"/>
+            <Button Text="=" WidthRequest="40" HeightRequest="40" x:Name="KeyEqual"/>
+        </HorizontalStackLayout>
+
+        <!-- Row 2: Q-P -->
+        <HorizontalStackLayout Spacing="5" HorizontalOptions="Center">
+            <Button Text="Q" WidthRequest="40" HeightRequest="40" x:Name="KeyQ"/>
+            <Button Text="W" WidthRequest="40" HeightRequest="40" x:Name="KeyW"/>
+            <Button Text="E" WidthRequest="40" HeightRequest="40" x:Name="KeyE"/>
+            <Button Text="R" WidthRequest="40" HeightRequest="40" x:Name="KeyR"/>
+            <Button Text="T" WidthRequest="40" HeightRequest="40" x:Name="KeyT"/>
+            <Button Text="Y" WidthRequest="40" HeightRequest="40" x:Name="KeyY"/>
+            <Button Text="U" WidthRequest="40" HeightRequest="40" x:Name="KeyU"/>
+            <Button Text="I" WidthRequest="40" HeightRequest="40" x:Name="KeyI"/>
+            <Button Text="O" WidthRequest="40" HeightRequest="40" x:Name="KeyO"/>
+            <Button Text="P" WidthRequest="40" HeightRequest="40" x:Name="KeyP"/>
+            <Button Text="[" WidthRequest="40" HeightRequest="40" x:Name="KeyBracketL"/>
+            <Button Text="]" WidthRequest="40" HeightRequest="40" x:Name="KeyBracketR"/>
+        </HorizontalStackLayout>
+
+        <!-- Row 3: A-L -->
+        <HorizontalStackLayout Spacing="5" HorizontalOptions="Center">
+            <Button Text="A" WidthRequest="40" HeightRequest="40" x:Name="KeyA"/>
+            <Button Text="S" WidthRequest="40" HeightRequest="40" x:Name="KeyS"/>
+            <Button Text="D" WidthRequest="40" HeightRequest="40" x:Name="KeyD"/>
+            <Button Text="F" WidthRequest="40" HeightRequest="40" x:Name="KeyF"/>
+            <Button Text="G" WidthRequest="40" HeightRequest="40" x:Name="KeyG"/>
+            <Button Text="H" WidthRequest="40" HeightRequest="40" x:Name="KeyH"/>
+            <Button Text="J" WidthRequest="40" HeightRequest="40" x:Name="KeyJ"/>
+            <Button Text="K" WidthRequest="40" HeightRequest="40" x:Name="KeyK"/>
+            <Button Text="L" WidthRequest="40" HeightRequest="40" x:Name="KeyL"/>
+            <Button Text=";" WidthRequest="40" HeightRequest="40" x:Name="KeySemicolon"/>
+            <Button Text="'" WidthRequest="40" HeightRequest="40" x:Name="KeyQuote"/>
+        </HorizontalStackLayout>
+
+        <!-- Row 4: Z-M -->
+        <HorizontalStackLayout Spacing="5" HorizontalOptions="Center">
+            <Button Text="Z" WidthRequest="40" HeightRequest="40" x:Name="KeyZ"/>
+            <Button Text="X" WidthRequest="40" HeightRequest="40" x:Name="KeyX"/>
+            <Button Text="C" WidthRequest="40" HeightRequest="40" x:Name="KeyC"/>
+            <Button Text="V" WidthRequest="40" HeightRequest="40" x:Name="KeyV"/>
+            <Button Text="B" WidthRequest="40" HeightRequest="40" x:Name="KeyB"/>
+            <Button Text="N" WidthRequest="40" HeightRequest="40" x:Name="KeyN"/>
+            <Button Text="M" WidthRequest="40" HeightRequest="40" x:Name="KeyM"/>
+            <Button Text="," WidthRequest="40" HeightRequest="40" x:Name="KeyComma"/>
+            <Button Text="." WidthRequest="40" HeightRequest="40" x:Name="KeyPeriod"/>
+            <Button Text="/" WidthRequest="40" HeightRequest="40" x:Name="KeySlash"/>
+        </HorizontalStackLayout>
+
+        <!-- Row 5: Space -->
+        <HorizontalStackLayout Spacing="5" HorizontalOptions="Center">
+            <Button Text="Space" WidthRequest="300" HeightRequest="40" x:Name="KeySpace"/>
+        </HorizontalStackLayout>
+
+    </VerticalStackLayout>
+    
+</ContentView>

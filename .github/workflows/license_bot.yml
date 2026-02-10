@@ -1,0 +1,78 @@
+name: License Bot Automation
+
+on:
+  # Run every 15 minutes
+  schedule:
+    - cron: '*/15 * * * *'
+  
+  # Allow manual trigger
+  workflow_dispatch:
+
+jobs:
+  process-licenses:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+      
+      - name: Cache Python dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('automation/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+      
+      - name: Install dependencies
+        run: |
+          cd automation
+          pip install --upgrade pip
+          pip install -r requirements.txt
+      
+      - name: Create credentials file
+        env:
+          GMAIL_CREDENTIALS: ${{ secrets.GMAIL_CREDENTIALS }}
+        run: |
+          cd automation
+          echo "$GMAIL_CREDENTIALS" > credentials.json
+      
+      - name: Restore token cache
+        uses: actions/cache@v3
+        with:
+          path: automation/token.pickle
+          key: ${{ runner.os }}-token-${{ github.run_id }}
+          restore-keys: |
+            ${{ runner.os }}-token-
+      
+      - name: Run automation script
+        env:
+          SHEET_ID: ${{ secrets.SHEET_ID }}
+        run: |
+          cd automation
+          python automation_script.py
+      
+      - name: Save token cache
+        if: always()
+        uses: actions/cache/save@v3
+        with:
+          path: automation/token.pickle
+          key: ${{ runner.os }}-token-${{ github.run_id }}
+      
+      - name: Clean up credentials
+        if: always()
+        run: |
+          rm -f automation/credentials.json
+      
+      - name: Upload logs (on failure)
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: automation-logs
+          path: automation/*.log
+          retention-days: 7
