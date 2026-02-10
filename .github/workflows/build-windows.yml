@@ -9,25 +9,37 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: windows-2022
     
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Setup .NET
+    - name: Setup .NET 6
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: '8.0.x'  # Use .NET 8 (compatible with .NET 6 MAUI)
+        dotnet-version: '6.0.x'
+
+    - name: Setup .NET 8
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
 
     - name: Install MAUI workload
-      run: dotnet workload install maui
+      run: |
+        dotnet workload install maui-windows --source https://api.nuget.org/v3/index.json
+        dotnet workload install maui --source https://api.nuget.org/v3/index.json
 
     - name: Restore dependencies
-      run: dotnet restore BijoyTypingMaster/BijoyTypingMaster.csproj
+      run: dotnet restore BijoyTypingMaster/BijoyTypingMaster.csproj --verbosity detailed
 
     - name: Build Windows App
-      run: dotnet build BijoyTypingMaster/BijoyTypingMaster.csproj -f net6.0-windows10.0.19041.0 -c Release
+      run: |
+        dotnet build BijoyTypingMaster/BijoyTypingMaster.csproj `
+          -f net6.0-windows10.0.19041.0 `
+          -c Release `
+          --no-restore `
+          --verbosity detailed
 
     - name: Publish Self-Contained Windows App
       run: |
@@ -38,6 +50,7 @@ jobs:
           --self-contained true `
           -p:PublishSingleFile=false `
           -p:PublishTrimmed=false `
+          --no-restore `
           -o ./publish
 
     - name: Create Portable Package with Instructions
