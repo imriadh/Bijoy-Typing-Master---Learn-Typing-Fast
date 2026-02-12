@@ -1,17 +1,17 @@
 # Bijoy Typing Master - Windows Build Script (Portable Edition)
 # Run this on Windows with: .\build-windows.ps1
 
-Write-Host "╔══════════════════════════════════════════════════════════════╗" -ForegroundColor Cyan
-Write-Host "║  Bijoy Typing Master - Build Script                         ║" -ForegroundColor Cyan
-Write-Host "║  Creating Portable Edition (No installation needed)         ║" -ForegroundColor Cyan
-Write-Host "╚══════════════════════════════════════════════════════════════╝" -ForegroundColor Cyan
+Write-Host "===============================================================" -ForegroundColor Cyan
+Write-Host "  Bijoy Typing Master - Build Script                         " -ForegroundColor Cyan
+Write-Host "  Creating Portable Edition (No installation needed)         " -ForegroundColor Cyan
+Write-Host "===============================================================" -ForegroundColor Cyan
 Write-Host ""
 
 # Check if .NET SDK is installed
 Write-Host "[1/6] Checking .NET SDK..." -ForegroundColor Yellow
 $dotnetVersion = & dotnet --version 2>$null
 if ($LASTEXITCODE -ne 0) {
-    Write-Host "❌ .NET SDK not found!" -ForegroundColor Red
+    Write-Host "[ERROR] .NET SDK not found!" -ForegroundColor Red
     Write-Host ""
     Write-Host "Please install .NET 6 or .NET 8 SDK from:" -ForegroundColor Yellow
     Write-Host "https://dotnet.microsoft.com/download" -ForegroundColor Cyan
@@ -19,22 +19,22 @@ if ($LASTEXITCODE -ne 0) {
     Write-Host "Or use winget: winget install Microsoft.DotNet.SDK.8" -ForegroundColor Cyan
     exit 1
 }
-Write-Host "✅ .NET SDK $dotnetVersion found" -ForegroundColor Green
+Write-Host "[OK] .NET SDK $dotnetVersion found" -ForegroundColor Green
 
 # Check MAUI workload
 Write-Host ""
 Write-Host "[2/6] Checking MAUI workload..." -ForegroundColor Yellow
 $mauiInstalled = & dotnet workload list | Select-String "maui"
 if (-not $mauiInstalled) {
-    Write-Host "⚠️  MAUI workload not installed. Installing now..." -ForegroundColor Yellow
+    Write-Host "[WARNING] MAUI workload not installed. Installing now..." -ForegroundColor Yellow
     dotnet workload install maui
     if ($LASTEXITCODE -ne 0) {
-        Write-Host "❌ Failed to install MAUI workload" -ForegroundColor Red
+        Write-Host "[ERROR] Failed to install MAUI workload" -ForegroundColor Red
         exit 1
     }
-    Write-Host "✅ MAUI workload installed" -ForegroundColor Green
+    Write-Host "[OK] MAUI workload installed" -ForegroundColor Green
 } else {
-    Write-Host "✅ MAUI workload already installed" -ForegroundColor Green
+    Write-Host "[OK] MAUI workload already installed" -ForegroundColor Green
 }
 
 # Navigate to project directory
@@ -47,10 +47,10 @@ Write-Host ""
 Write-Host "[4/6] Restoring NuGet packages..." -ForegroundColor Yellow
 dotnet restore BijoyTypingMaster.csproj
 if ($LASTEXITCODE -ne 0) {
-    Write-Host "❌ Package restore failed" -ForegroundColor Red
+    Write-Host "[ERROR] Package restore failed" -ForegroundColor Red
     exit 1
 }
-Write-Host "✅ Packages restored" -ForegroundColor Green
+Write-Host "[OK] Packages restored" -ForegroundColor Green
 
 # Publish self-contained
 Write-Host ""
@@ -66,7 +66,7 @@ dotnet publish BijoyTypingMaster.csproj `
     -o ../BuildOutput
 
 if ($LASTEXITCODE -ne 0) {
-    Write-Host "❌ Build failed!" -ForegroundColor Red
+    Write-Host "[ERROR] Build failed!" -ForegroundColor Red
     Write-Host ""
     Write-Host "Common issues:" -ForegroundColor Yellow
     Write-Host "1. Make sure you're running on Windows 10/11" -ForegroundColor Gray
@@ -76,7 +76,7 @@ if ($LASTEXITCODE -ne 0) {
 }
 
 Set-Location ..
-Write-Host "✅ Build completed successfully!" -ForegroundColor Green
+Write-Host "[OK] Build completed successfully!" -ForegroundColor Green
 
 # Create README
 Write-Host ""
@@ -144,7 +144,7 @@ Build: Self-Contained Portable Edition (Built on your machine)
 "@
 
 $readme | Out-File -FilePath BuildOutput/README.txt -Encoding UTF8
-Write-Host "✅ README created" -ForegroundColor Green
+Write-Host "[OK] README created" -ForegroundColor Green
 
 # Create ZIP
 Write-Host ""
@@ -154,23 +154,23 @@ if (Test-Path $zipPath) {
     Remove-Item $zipPath
 }
 Compress-Archive -Path BuildOutput/* -DestinationPath $zipPath
-Write-Host "✅ ZIP package created: $zipPath" -ForegroundColor Green
+Write-Host "ZIP package created: $zipPath" -ForegroundColor Green
 
 # Show completion message
 Write-Host ""
-Write-Host "╔══════════════════════════════════════════════════════════════╗" -ForegroundColor Green
-Write-Host "║  🎉 BUILD SUCCESSFUL!                                        ║" -ForegroundColor Green
-Write-Host "╚══════════════════════════════════════════════════════════════╝" -ForegroundColor Green
+Write-Host "===============================================================" -ForegroundColor Green
+Write-Host "  BUILD SUCCESSFUL!                                           " -ForegroundColor Green
+Write-Host "===============================================================" -ForegroundColor Green
 Write-Host ""
-Write-Host "📦 Portable Package: BijoyTypingMaster-Portable.zip" -ForegroundColor Cyan
-Write-Host "📁 Build Output: BuildOutput/" -ForegroundColor Cyan
+Write-Host "Portable Package: BijoyTypingMaster-Portable.zip" -ForegroundColor Cyan
+Write-Host "Build Output: BuildOutput/" -ForegroundColor Cyan
 Write-Host ""
 Write-Host "Next Steps:" -ForegroundColor Yellow
 Write-Host "1. Extract the ZIP to any folder" -ForegroundColor White
 Write-Host "2. Download SutonnyMJ.ttf font (see README.txt)" -ForegroundColor White
 Write-Host "3. Run BijoyTypingMaster.exe" -ForegroundColor White
 Write-Host ""
-Write-Host "⚠️  IMPORTANT: Do not forget to add the Bangla font!" -ForegroundColor Yellow
+Write-Host "IMPORTANT: Do not forget to add the Bangla font!" -ForegroundColor Yellow
 Write-Host ""
 
 # Ask if user wants to open the folder
