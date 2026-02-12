@@ -170,7 +170,7 @@ Write-Host "1. Extract the ZIP to any folder" -ForegroundColor White
 Write-Host "2. Download SutonnyMJ.ttf font (see README.txt)" -ForegroundColor White
 Write-Host "3. Run BijoyTypingMaster.exe" -ForegroundColor White
 Write-Host ""
-Write-Host "⚠️  IMPORTANT: Don't forget to add the Bangla font!" -ForegroundColor Yellow
+Write-Host "⚠️  IMPORTANT: Do not forget to add the Bangla font!" -ForegroundColor Yellow
 Write-Host ""
 
 # Ask if user wants to open the folder
