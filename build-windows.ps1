@@ -83,12 +83,12 @@ Write-Host ""
 Write-Host "[6/6] Creating package..." -ForegroundColor Yellow
 
 $readme = @"
-╔══════════════════════════════════════════════════════════════╗
-║  Bijoy Typing Master - Portable Edition                     ║
-║  No Installation Required!                                   ║
-╚══════════════════════════════════════════════════════════════╝
+===============================================================
+  Bijoy Typing Master - Portable Edition
+  No Installation Required!
+===============================================================
 
-📥 QUICK START (3 Steps):
+QUICK START (3 Steps):
 
 1. DOWNLOAD FONT (Required for Bangla text):
    https://www.omicronlab.com/download/fonts/SutonnyMJ.ttf
@@ -100,44 +100,44 @@ $readme = @"
 3. RUN THE APP:
    Double-click: BijoyTypingMaster.exe
 
-✅ No .NET installation needed - everything is included!
-✅ No admin rights required  
-✅ Fully portable - works from USB drive
+- No .NET installation needed - everything is included!
+- No admin rights required  
+- Fully portable - works from USB drive
 
-📊 SYSTEM REQUIREMENTS:
+SYSTEM REQUIREMENTS:
 - Windows 10 (1809+) or Windows 11
 - 200 MB free space
 - No other software needed!
 
-🎮 FEATURES:
-✅ Phase 1: 6 core typing features (100%)
-   • Structured lessons (Bijoy & Unicode)
-   • Speed tests with WPM tracking
-   • Statistics dashboard
-   • Settings panel
-   • Certificate generator
-   • Finger position guide
+FEATURES:
+- Phase 1: 6 core typing features (100%)
+  * Structured lessons (Bijoy & Unicode)
+  * Speed tests with WPM tracking
+  * Statistics dashboard
+  * Settings panel
+  * Certificate generator
+  * Finger position guide
 
-✅ Phase 2: 5 gamification features (71%)
-   • XP & Leveling System (50 levels)
-   • Daily Challenges (4 types)
-   • Achievement System (26 achievements)
-   • Custom text practice
-   • Full XP integration
+- Phase 2: 5 gamification features (71%)
+  * XP & Leveling System (50 levels)
+  * Daily Challenges (4 types)
+  * Achievement System (26 achievements)
+  * Custom text practice
+  * Full XP integration
 
-⚙️ DATABASE:
+DATABASE:
 All your progress saves to:
 %LOCALAPPDATA%\BijoyTypingMaster\BijoyTypingMaster.db
 
 To reset progress, delete that database file.
 
-🆘 TROUBLESHOOTING:
-• Bangla shows as □□□ → Missing SutonnyMJ.ttf font
-• Won't start → Run as Administrator once
-• Blocked by Windows → Right-click .exe → Properties → Unblock
-• Error on first run → Wait 2-3 seconds for database initialization
+TROUBLESHOOTING:
+* Bangla shows as boxes -> Missing SutonnyMJ.ttf font
+* Will not start -> Run as Administrator once
+* Blocked by Windows -> Right-click .exe -> Properties -> Unblock
+* Error on first run -> Wait 2-3 seconds for database initialization
 
-📧 SUPPORT: https://github.com/imriadh/Bijoy-Typing-Master---Learn-Typing-Fast
+SUPPORT: https://github.com/imriadh/Bijoy-Typing-Master---Learn-Typing-Fast
 
 Generated: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')
 Build: Self-Contained Portable Edition (Built on your machine)
@@ -175,6 +175,6 @@ Write-Host ""
 
 # Ask if user wants to open the folder
 $response = Read-Host "Open build folder now? (y/n)"
-if ($response -eq "y" -or $response -eq "Y") {
+if ($response -match "[yY]") {
     Start-Process BuildOutput
 }
