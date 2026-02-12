@@ -175,6 +175,6 @@ Write-Host ""
 
 # Ask if user wants to open the folder
 $response = Read-Host "Open build folder now? (y/n)"
-if ($response -eq 'y' -or $response -eq 'Y') {
+if ($response -eq "y" -or $response -eq "Y") {
     Start-Process BuildOutput
 }
